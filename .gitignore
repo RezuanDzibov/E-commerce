@@ -1,0 +1,15 @@
+.vscode
+tasks.txt
+.gitignore
+.env
+
+__pycache__/
+*/__pycache__/
+*.py[cod]
+.pyc
+*.pyc
+
+media/*
+db.sqlite3
+
+
