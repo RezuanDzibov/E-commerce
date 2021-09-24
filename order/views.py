@@ -6,7 +6,7 @@ class AddToOrder(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.add_to_order(request)
+        order = services.AddToOrder(request).main()
         return response.Response(data=order.data, status=status.HTTP_201_CREATED)
 
 

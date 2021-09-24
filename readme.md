@@ -1,6 +1,7 @@
 # Hello everyone.
 
 ## Some words about it project.
+
 This project is being developed by me as an educational one. And there may be something not implemented at the proper level or should be done in a way (approach). Thank you for your attention.
 
 # Technologies used

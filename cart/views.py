@@ -33,7 +33,7 @@ class RemoveFromCart(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request, *args, **kwargs):
-        item = services.remove_from_cart(request=request)
+        item = services.RemoveFromCart(request=request).main()
         if item is not None:
             return Response(data=item.data, status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_204_NO_CONTENT)
