@@ -1,14 +1,15 @@
 from pathlib import Path
 import os
+# from decouple import config
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = str(os.environ.get("SECRET_KEY"))
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = bool(int(os.environ.get("DEBUG", default=1)))
+DEBUG = os.environ.get("DEBUG", 1)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 INSTALLED_APPS = [
@@ -72,14 +73,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": config("POSTGRES_ENGINE", default="django.db.backends.sqlite3"),
+#         "NAME": config("POSTGRES_DB", default=os.path.join(BASE_DIR, "db.sqlite3")),
+#         "USER": config("POSTGRES_USER", default="user"),
+#         "PASSWORD": config("POSTGRES_PASSWORD", default="password"),
+#         "HOST": config("POSTGRES_HOST", default="localhost"),
+#         "PORT": config("POSTGRES_PORT", default="5432"),
+#     }
+# }
+
+
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("POSTGRES_USER", "user"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
 
@@ -121,11 +134,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", None)
-EMAIL_HOST = os.environ.get("EMAIL_HOST", None)
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
-EMAIL_PORT = os.environ.get("EMAIL_PORT", None)
+# EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=None)
+# EMAIL_HOST = config("EMAIL_HOST", default=None)
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER", default=None)
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default=None)
+# EMAIL_PORT = config("EMAIL_PORT", default=None)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
