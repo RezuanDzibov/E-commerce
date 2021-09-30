@@ -11,12 +11,9 @@ class AddToOrder(views.APIView):
 
 
 class PayOrder(views.APIView):
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.pay(request)
-        if order is not None:
-            return response.Response(data=order.data)
-        else:
-            return response.Response(data="Order does not exist.", status=status.HTTP_404_NOT_FOUND)
+        order = services.Pay(request).main()
+        return response.Response(data=order.data)
 

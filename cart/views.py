@@ -18,14 +18,14 @@ class ClearCart(views.APIView):
 
     def delete(self, request):
         services.clear_cart(request=request)
-        return Response(data={"detail": "Your cart benn cleared."})
+        return Response(data={"detail": "Your cart been cleared."})
 
 
 class AddToCart(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        item = services.add_to_cart(request=request)
+        item = services.AddToCart(request=request).main()
         return response.Response(data=item.data, status=status.HTTP_201_CREATED)
 
 
