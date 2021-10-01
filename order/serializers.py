@@ -20,6 +20,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = (
+            "id",
             "first_name", 
             "last_name", 
             "phone", 
@@ -32,5 +33,5 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
 
-class PayOrder(serializers.Serializer):
+class PayOrderSerializer(serializers.Serializer):
     id = serializers.IntegerField(min_value=0)

@@ -10,3 +10,5 @@ class CustomerCartAndOrders(views.APIView):
         orders = return_orders(request=request)
         cart_items = return_cart_items(request=request)
         return response.Response(data={"orders": orders.data, "cart_items": cart_items.data}, status=status.HTTP_200_OK)
+
+        

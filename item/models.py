@@ -1,6 +1,5 @@
 from django.db import models
 from product.models import Product
-from django.core import validators
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
