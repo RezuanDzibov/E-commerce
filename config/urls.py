@@ -3,7 +3,6 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from .yasg import urlpatterns as doc_urls
-import debug_toolbar
 
 
 urlpatterns = [
@@ -14,9 +13,6 @@ urlpatterns = [
     path('api/v1/product/', include('product.urls')),
     path('api/v1/order/', include('order.urls')),
     path('api/v1/customer/', include('customer.urls')),
-    path('__debug__/', include(debug_toolbar.urls)),
-
-
 
 ]
 
