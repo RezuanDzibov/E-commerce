@@ -1,15 +1,14 @@
 from pathlib import Path
 import os
-from decouple import config
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = config("DEBUG", default=1)
+DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 INSTALLED_APPS = [
@@ -30,7 +29,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'drf_yasg',
-    'debug_toolbar',
     'django_filters',
     'djoser',
     'rest_framework.authtoken',
@@ -74,12 +72,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": config("SQL_ENGINE", default="django.db.backends.sqlite3"),
-        "NAME": config("SQL_DATABASE", default=os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": config("SQL_USER", default="user"),
-        "PASSWORD": config("SQL_PASSWORD", default="password"),
-        "HOST": config("SQL_HOST", default="localhost"),
-        "PORT": config("SQL_PORT", default="5432"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD"),
+        "HOST": os.environ.get("SQL_HOST"),
+        "PORT": os.environ.get("SQL_PORT"),
     }
 }
 
@@ -121,11 +119,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", None)
-EMAIL_HOST = config("EMAIL_HOST", None)
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", None)
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", None)
-EMAIL_PORT = config("EMAIL_PORT", None)
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", None)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", None)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
+EMAIL_PORT = os.environ.get("EMAIL_PORT", None)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -142,8 +140,3 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
-
-
-INTERNAL_IPS = [
-    "127.0.0.1"
-]

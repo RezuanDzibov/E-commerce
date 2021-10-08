@@ -9,10 +9,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('api/v1/cart/', include('cart.urls')),
-    path('api/v1/product/', include('product.urls')),
-    path('api/v1/order/', include('order.urls')),
-    path('api/v1/customer/', include('customer.urls')),
+    path('api/v1/cart/', include('cart.urls', namespace="cart")),
+    path('api/v1/product/', include('product.urls', namespace="product")),
+    path('api/v1/order/', include('order.urls', namespace="order")),
+    path('api/v1/customer/', include('customer.urls', namespace="customer")),
 
 ]
 
