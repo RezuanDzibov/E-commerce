@@ -3,6 +3,7 @@ import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+PROJECT_BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -111,7 +112,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(PROJECT_BASE_DIR, 'static')
 STATICFILES_DIRS = [STATIC_DIR]
 
 

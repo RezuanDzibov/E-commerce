@@ -4,7 +4,7 @@ from . import models
 
 class ProductListSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source="category.name")
-    url = serializers.HyperlinkedIdentityField("product-detail", lookup_field="slug")
+    url = serializers.HyperlinkedIdentityField(view_name="product:product-detail", lookup_field="slug", read_only=True)
 
     class Meta:
         model = models.Product
@@ -13,7 +13,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 class ProductRetriveSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source="category.name")
-    images = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="image-detail")
+    images = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="product:image-detail")
 
     class Meta:
         model = models.Product
@@ -52,7 +52,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class CategotyListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="category-detail", lookup_field="slug")
+    url = serializers.HyperlinkedIdentityField(view_name="product:category-detail", lookup_field="slug")
 
     class Meta:
         model = models.Category
