@@ -50,6 +50,10 @@ Pillow = "==8.3.2"
 PyJWT = "==2.1.0"
 flake8 = "*"
 python-dotenv = "*"
+flake8-bugbear = "*"
+flake8-builtins = "*"
+pep8-naming = "*"
+flake8-import-order = "*"
 
 [dev-packages]
 

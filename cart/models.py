@@ -1,7 +1,8 @@
-from django.db import models
-from item.models import Item
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
+
+from item.models import Item
 
 
 Customer = get_user_model()
@@ -17,4 +18,3 @@ class Cart(models.Model):
     class Meta:
         verbose_name = "Cart"
         verbose_name_plural = "Carts"
-

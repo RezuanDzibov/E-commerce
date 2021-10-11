@@ -1,13 +1,19 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-PROJECT_BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+dotenv_path = Path(f"{BASE_DIR}/.env.prod")
+load_dotenv(dotenv_path=dotenv_path)
+
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = os.environ.get("DEBUG")
+DEBUG = bool(int(os.environ.get("DEBUG")))
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
@@ -110,10 +116,10 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_URL = '/static/'
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATIC_ROOT = os.path.join(PROJECT_BASE_DIR, 'static')
-STATICFILES_DIRS = [STATIC_DIR]
+# STATIC_URL = '/static/'
+# STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [STATIC_DIR]
 
 
 MEDIA_URL = '/media/'

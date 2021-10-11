@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import Cart
-from item.models import Item
 from django.contrib.contenttypes.admin import GenericTabularInline
+
+from item.models import Item
+
+from .models import Cart
 
 
 class ItemInline(GenericTabularInline):
@@ -13,6 +15,4 @@ class ItemInline(GenericTabularInline):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-   inlines = [
-       ItemInline
-   ]
+    inlines = (ItemInline,)
