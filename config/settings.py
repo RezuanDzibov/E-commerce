@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+sys.path.insert(0, os.path.join(BASE_DIR, 'src'))
 
 dotenv_path = Path(f"{BASE_DIR}/.env.prod")
 load_dotenv(dotenv_path=dotenv_path)
