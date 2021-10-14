@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 sys.path.insert(0, os.path.join(BASE_DIR, 'src'))
 
-dotenv_path = Path(f"{BASE_DIR}/.env.prod")
+dotenv_path = Path(f"{BASE_DIR}/.env.dev")
 load_dotenv(dotenv_path=dotenv_path)
 
 
@@ -53,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 
@@ -118,7 +117,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 # STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATICFILES_DIRS = [STATIC_DIR]

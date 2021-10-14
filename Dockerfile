@@ -1,4 +1,4 @@
-FROM python:3.10 as builder
+FROM python:3.9.7 as builder
 
 WORKDIR /usr/src/app
 
@@ -18,7 +18,7 @@ COPY . .
 COPY ./requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
-FROM python:3.10
+FROM python:3.9.7
 
 RUN mkdir -p /home/app
 
