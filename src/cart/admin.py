@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
-
-from item.models import Item
+from src.item.models import Item
 
 from .models import Cart
 

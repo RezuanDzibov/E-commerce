@@ -1,12 +1,13 @@
+from rest_framework import permissions, response, status, views
+
 from . import services
-from rest_framework import response, status, views, permissions
 
 
-class AddToOrder(views.APIView):
+class CreateOrder(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.AddToOrder(request).main()
+        order = services.CreateOrder(request).main()
         return response.Response(data=order.data, status=status.HTTP_201_CREATED)
 
 
@@ -14,6 +15,5 @@ class PayOrder(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.Pay(request).main()
+        order = services.PayOrder(request).main()
         return response.Response(data=order.data)
-

@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Order
-from item.models import Item
 from django.contrib.contenttypes.admin import GenericTabularInline
+from src.item.models import Item
+
+from .models import Order
 
 
 class ItemInline(GenericTabularInline):

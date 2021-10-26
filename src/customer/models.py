@@ -4,7 +4,7 @@ from django.db import models
 
 
 class CustomerManager(BaseUserManager):
-    
+
     def create_user(self, first_name, last_name, email, password, **extra_fields):
         if not email:
             raise ValueError("The email must be set")
@@ -40,11 +40,11 @@ class Customer(AbstractUser):
 
     objects = CustomerManager()
 
+    class Meta:
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
+
     def __str__(self):
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.email
-
-    class Meta:
-        verbose_name = "Customer"
-        verbose_name_plural = "Customers"

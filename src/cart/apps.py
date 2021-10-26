@@ -3,7 +3,7 @@ from django.apps import AppConfig
 
 class CartConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cart'
+    name = 'src.cart'
 
     def ready(self):
-        import cart.signals
+        import src.cart.signals

@@ -1,9 +1,11 @@
 from django.db.models.query import QuerySet
 from rest_framework import exceptions
-from cart.models import Item
+from src.cart.models import Item
+from src.core.services_mixins import SerializerMixin
+
 from .models import Order
-from .serializers import OrderSerializer, AddtoOrderSerializer, PayOrderSerializer
-from utils.services_mixins import SerializerMixin
+from .serializers import (AddtoOrderSerializer, OrderSerializer,
+                          PayOrderSerializer)
 
 
 def return_orders(request) -> OrderSerializer:
@@ -12,7 +14,7 @@ def return_orders(request) -> OrderSerializer:
     return serializered_orders
 
 
-class AddToOrder(SerializerMixin):
+class CreateOrder(SerializerMixin):
     serializer_class = AddtoOrderSerializer
 
     def __init__(self, request):
@@ -25,7 +27,7 @@ class AddToOrder(SerializerMixin):
         self.order = self.create_order()
         self.add_item_to_order()
         return OrderSerializer(self.order)
-    
+
     def filter_ids(self) -> list:
         data_ids = self.data.pop("ids")[0].split(",")
         ids = []
@@ -33,13 +35,13 @@ class AddToOrder(SerializerMixin):
         for id in data_ids:
             try:
                 ids.append(int(id))
-            except Exception as _:
+            except Exception:
                 invalid_ids.append(id)
         if len(invalid_ids) > 0:
             raise exceptions.ValidationError(f"You have provided invalid data for the ids field.{invalid_ids}")
         return ids
 
-    def return_items(self) -> QuerySet: 
+    def return_items(self) -> QuerySet:
         items = Item.objects.filter(id__in=self.ids, cart__id=self.request.user.cart.id)
         if items.exists():
             return items
@@ -48,10 +50,10 @@ class AddToOrder(SerializerMixin):
     def create_order(self) -> Order:
         serializer = self.serialize(self.data)
         order = Order.objects.create(
-            customer=self.request.user, 
-            **serializer.validated_data, 
+            customer=self.request.user,
+            **serializer.validated_data,
             delivery_status="processed"
-        )   
+        )
         return order
 
     def add_item_to_order(self) -> QuerySet:
@@ -60,7 +62,7 @@ class AddToOrder(SerializerMixin):
             item.save()
 
 
-class Pay(SerializerMixin):
+class PayOrder(SerializerMixin):
     serializer_class = PayOrderSerializer
 
     def __init__(self, request):
@@ -80,5 +82,3 @@ class Pay(SerializerMixin):
             return serializerd_order
         except Order.DoesNotExist:
             raise exceptions.NotFound("You do not have such an order.")
-
-        

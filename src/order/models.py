@@ -1,8 +1,8 @@
-from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
-from item.models import Item
+from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
+from src.item.models import Item
 
 
 Customer = get_user_model()
@@ -13,8 +13,8 @@ class Order(models.Model):
         ("processed", "Processed"),
         ("delivering", "Delivering"),
         ("delivered", "Delivered")
-    ) 
-    
+    )
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="orders")
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -28,6 +28,10 @@ class Order(models.Model):
     delivery_status = models.CharField(max_length=10, choices=delivery_statuses)
     items = GenericRelation(Item, related_query_name="order")
 
+    class Meta:
+        verbose_name = "Order"
+        verbose_name_plural = "Orders"
+
     def __str__(self):
         return f"{self.customer}'s order status: {self.delivery_status}"
 
@@ -38,10 +42,3 @@ class Order(models.Model):
         for item in items:
             total_price += item["product__price"] * item["quantity"]
         return total_price
-
-    class Meta:
-        verbose_name = "Order"
-        verbose_name_plural = "Orders"
-
-
-

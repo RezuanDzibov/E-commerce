@@ -1,7 +1,6 @@
-from rest_framework import views, permissions
-from rest_framework import response
+from rest_framework import permissions, response, status, views
 from rest_framework.response import Response
-from rest_framework import status
+
 from . import services
 
 

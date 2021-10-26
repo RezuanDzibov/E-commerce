@@ -1,23 +1,18 @@
 from typing import Optional
 
-from cart.serializers import CartAddSerializer, CartRemoveSerializer
-
 from django.db.models import F
-
 from rest_framework import exceptions
-
-from item.models import Item
-from item.serializers import ItemSerializer
-
-from product.models import Product
-
-from utils.services_mixins import SerializerMixin
+from src.cart.serializers import CartAddSerializer, CartRemoveSerializer
+from src.item.models import Item
+from src.item.serializers import ItemSerializer
+from src.product.models import Product
+from src.core.services_mixins import SerializerMixin
 
 
 def return_cart_items(request) -> ItemSerializer:
     items = request.user.cart.items.all()
-    serializerd_items = ItemSerializer(items, many=True)
-    return serializerd_items
+    serializered_items = ItemSerializer(items, many=True)
+    return serializered_items
 
 
 def clear_cart(request):
@@ -42,7 +37,7 @@ class AddToCart(SerializerMixin):
 
     def get_product(self) -> Product:
         try:
-            product = Product.objects.get(slug=self.serializer.data["product_slug"])
+            product = Product.objects.get(slug=self.serializer.data.get("product_slug"))
             return product
         except Product.DoesNotExist:
             return exceptions.NotFound("No such product.")
@@ -55,12 +50,12 @@ class AddToCart(SerializerMixin):
         item = Item.objects.create(
             content_object=self.request.user.cart,
             product=self.product,
-            quantity=self.serializer.data["product_qty"]
+            quantity=self.serializer.data.get("product_qty")
         )
         return item
 
     def update_item(self) -> Item:
-        self.item.update(quantity=F("quantity") + self.serializer.data["product_qty"])
+        self.item.update(quantity=F("quantity") + self.serializer.data.get("product_qty"))
         return self.item[0]
 
 

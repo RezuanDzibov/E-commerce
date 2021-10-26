@@ -1,6 +1,7 @@
-from .models import Order
 from rest_framework import serializers
-from item.serializers import ItemSerializer
+from src.item.serializers import ItemSerializer
+
+from .models import Order
 
 
 class ItemIDsSerializer(serializers.Serializer):

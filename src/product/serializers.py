@@ -68,7 +68,7 @@ class CategoryRetriveSerializer(serializers.ModelSerializer):
 
 
 class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = models.Category
         fields = ("name", "parent")

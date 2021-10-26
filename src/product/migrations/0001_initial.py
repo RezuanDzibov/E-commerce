@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import mptt.fields
-import product.models
+import src.product.models
 
 
 class Migration(migrations.Migration):
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             name='Image',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=product.models.get_upload_path)),
+                ('image', models.ImageField(upload_to=src.product.models.get_upload_path)),
                 ('alt_text', models.CharField(max_length=255, null=True, verbose_name='Alturnative text')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='product.product')),
             ],

@@ -1,7 +1,7 @@
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey
-from django.utils.text import slugify
 from django.urls import reverse
+from django.utils.text import slugify
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 def get_upload_path(instance, filename):
@@ -12,14 +12,14 @@ class Category(MPTTModel):
     name = models.CharField(max_length=300)
     slug = models.SlugField(unique=True, blank=True)
     parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children")
-    
+
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
-    
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -44,15 +44,15 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse("product-detail", kwargs={"slug": self.slug})
-        
+
 
 class Image(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
@@ -66,6 +66,6 @@ class Image(models.Model):
     def __str__(self):
         image_name = f"{self.image}".split('/')[-1]
         return f"{self.product.name} {image_name}"
-    
+
     def get_absolute_url(self):
         return reverse("image-detail", kwargs={"pk": self.pk})
