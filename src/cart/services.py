@@ -1,99 +1,100 @@
-from typing import Optional
+from typing import Optional, Union
 
-from django.db.models import F
+from django.db.models import F, QuerySet
 from rest_framework import exceptions
-from src.cart.serializers import CartAddSerializer, CartRemoveSerializer
+
+from src.cart.serializers import CartProductAddSerializer, CartProductRemoveSerializer
 from src.item.models import Item
 from src.item.serializers import ItemSerializer
 from src.product.models import Product
-from src.core.services_mixins import SerializerMixin
+from src.core.services_mixins import SerializerMixin, serialize_data, validate_serializer
 
 
 def return_cart_items(request) -> ItemSerializer:
+    """ Function for returning items from customer's cart """
     items = request.user.cart.items.all()
-    serializered_items = ItemSerializer(items, many=True)
-    return serializered_items
+    serialized_items = ItemSerializer(items, many=True)
+    return serialized_items
 
 
 def clear_cart(request):
+    """ Function for cleaning customer's cart """
     request.user.cart.items.all().delete()
 
 
-class AddToCart(SerializerMixin):
-    serializer_class = CartAddSerializer
-
+class AddItemToCart:
+    """ Class for add item to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
     def main(self) -> ItemSerializer:
-        self.serializer = self.serialize(data=self.request.data)
-        self.product = self.get_product()
-        self.item = self.get_item()
-        if not self.item.exists():
-            item = self.create_item()
+        request_data_serializer = validate_serializer(serialize_data(serializer_class=CartProductAddSerializer, data=self.request.data))
+        product = self.get_product(request_data_serializer)
+        item = self.get_item(product)
+        if not item.exists():
+            item = self.create_item(product, request_data_serializer)
         else:
-            item = self.update_item()
+            item = self.update_item(item, request_data_serializer)
         return ItemSerializer(item)
 
-    def get_product(self) -> Product:
+    def get_product(self, request_data_serializer) -> Union[Product, exceptions.NotFound]:
         try:
-            product = Product.objects.get(slug=self.serializer.data.get("product_slug"))
+            product = Product.objects.get(slug=request_data_serializer.data.get("product_slug"))
             return product
         except Product.DoesNotExist:
             return exceptions.NotFound("No such product.")
 
-    def get_item(self) -> Item:
-        item = Item.objects.filter(cart__id=self.request.user.cart.id, product=self.product)
+    def get_item(self, product) -> QuerySet:
+        item = Item.objects.filter(cart__id=self.request.user.cart.id, product=product)
         return item
 
-    def create_item(self) -> Item:
+    def create_item(self, product, request_data_serializer) -> Item:
         item = Item.objects.create(
             content_object=self.request.user.cart,
-            product=self.product,
-            quantity=self.serializer.data.get("product_qty")
+            product=product,
+            quantity=request_data_serializer.data.get("product_qty")
         )
         return item
 
-    def update_item(self) -> Item:
-        self.item.update(quantity=F("quantity") + self.serializer.data.get("product_qty"))
-        return self.item[0]
+    def update_item(self, item, request_data_serializer) -> Item:
+        item.update(quantity=F("quantity") + request_data_serializer.data.get("product_qty"))
+        return item[0]
 
 
-class RemoveFromCart(SerializerMixin):
-    serializer_class = CartRemoveSerializer
-
+class RemoveItemFromCart:
+    """ Class for remove product to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
     def main(self) -> Optional[ItemSerializer]:
-        self.serializer = self.serialize(self.request.data)
-        self.product_qty = self.return_product_qty()
-        self.item = self.return_item()
-        if self.product_qty is not None:
-            item = self.reduce()
+        request_data_serializer = serialize_data(serializer_class=CartProductRemoveSerializer, data=self.request.data)
+        product_qty = self.pop_product_qty_from_reuqest_data(request_data_serializer)
+        item = self.return_item_from_cart(request_data_serializer)
+        if product_qty is not None:
+            item = self.reduce_quantity_of_product(item, product_qty)
             return item
         else:
-            self.remove()
+            self.remove_product(item)
 
-    def return_product_qty(self) -> int:
-        product_qty = self.serializer.data.get("product_qty", None)
+    def pop_product_qty_from_reuqest_data(self, request_data_serializer) -> int:
+        product_qty = request_data_serializer.data.get("product_qty", None)
         return product_qty
 
-    def return_item(self) -> Item:
+    def return_item_from_cart(self, request_data_serializer) -> Item:
         item = Item.objects.filter(
             cart__id=self.request.user.cart.id,
-            product__slug=self.serializer.data["product_slug"]
+            product__slug=request_data_serializer.data["product_slug"]
         )
         if item.exists():
             return item
         else:
             raise exceptions.NotFound("No such product.")
 
-    def reduce(self) -> ItemSerializer:
-        self.item.update(quantity=F("quantity") - self.product_qty)
-        if int(self.item[0].quantity) == 0:
-            self.item[0].delete()
-        return ItemSerializer(self.item[0])
+    def reduce_quantity_of_product(self, item, product_qty) -> ItemSerializer:
+        item.update(quantity=F("quantity") - product_qty)
+        if int(item[0].quantity) == 0:
+            item[0].delete()
+        return ItemSerializer(item[0])
 
-    def remove(self):
-        self.item[0].delete()
+    def remove_product(self, item):
+        item[0].delete()

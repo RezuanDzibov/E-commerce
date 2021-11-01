@@ -2,7 +2,7 @@ import factory
 
 from faker import Faker
 
-# from product.models import Category
+from src.product.models import Category, Product
 
 
 fake = Faker()
@@ -10,6 +10,16 @@ fake = Faker()
 
 class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = "product.Category"
+        model = Category
 
-    name = fake.name()[:20]
+    name = fake.name()
+
+
+class ProductFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Product
+
+    name = factory.LazyAttribute(lambda obj: fake.numerify(text="Intel Core i%-%%##K"))
+    small_description = factory.LazyAttribute(lambda obj: fake.text())
+    price = factory.LazyAttribute(lambda obj: fake.random_int(min=100, max=1000, step=50))
+    available = factory.LazyAttribute(lambda obj: fake.boolean())

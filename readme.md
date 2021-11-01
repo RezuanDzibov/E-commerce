@@ -19,27 +19,25 @@ This project is being developed by me as an educational one. And there may be so
 
 ## Tools
 
-![Docker](https://img.shields.io/badge/Docker-160d91?style=for-the-badge&logo=Docker)
-![Postman](https://img.shields.io/badge/Postman-dba240?style=for-the-badge&logo=postman)
+![docker](https://img.shields.io/badge/Docker-160d91?style=for-the-badge&logo=Docker)
+![postman](https://img.shields.io/badge/Postman-dba240?style=for-the-badge&logo=postman)
 
-![Git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
-![GitHub](https://img.shields.io/badge/github-292621?style=for-the-badge&logo=github)
+![git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
+![gitHub](https://img.shields.io/badge/github-292621?style=for-the-badge&logo=github)
 
-![VScode](https://img.shields.io/badge/VSCode-blue?style=for-the-badge&logo=visual-studio-code)
+![vscode](https://img.shields.io/badge/VSCode-blue?style=for-the-badge&logo=visual-studio-code)
 
-# The essence of the project and what it is.
-
-## This is a simple e-commerce project. Which provide basic e-commerce functionality.
+## The essence of the project and what it is.
 
 ### Some features that can be highlighted.
-
+### (Django apps in src dir.)
 + Customer
-  + Customer user model which based by AbstactUser.
+  + Customer user model which based by AbstractUser.
   + It has CustomerManager which base by BaseUser Manager
   + Username field replaced by email field. It's login for a customer.
   + When a new customer is created, a shopping cart is created for him. And when you delete a customer, his cart is deleted. This is all implemented using django signals.
 + Item
-  + When an item is created, it is associated with the requestor cart using a generic foreignkey relationship.
+  + When an item is created, it is associated with the requester cart using a generic foreignkey relationship.
   + When the order is placed. This item is associated with the created order through the field that was associated with the cart.
 + Order
   + When an order is created, it is linked through a foreign key to the customer creating the order.
