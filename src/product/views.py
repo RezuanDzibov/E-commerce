@@ -9,11 +9,12 @@ from . import serializers
 
 
 class CategoryViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
+    """ Category ViewSet """
     queryset = models.Category.objects.all()
     default_serializer_class = serializers.CategoryCreateUpdateSerializer
     serializer_classes = {
-        "list": serializers.CategotyListSerializer,
-        "retrieve": serializers.CategoryRetriveSerializer
+        "list": serializers.CategoryListSerializer,
+        "retrieve": serializers.CategoryRetrieveSerializer
     }
     lookup_field = "slug"
     filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter)
@@ -23,11 +24,12 @@ class CategoryViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
 
 
 class ProductViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
-    queryset = models.Product.objects.filter(available=True)
+    """ Product ViewSet """
+    queryset = models.Product.objects.all()
     default_serializer_class = serializers.ProductCreateUpdateSerializer
     serializer_classes = {
-        "list": serializers.ProductListSerializer,
-        "retrieve": serializers.ProductRetriveSerializer
+        # "list": serializers.ProductListSerializer,
+        "retrieve": serializers.ProductRetrieveSerializer
     }
     lookup_field = "slug"
     permission_classes = (IsStaffOrReadOnly,)
@@ -42,6 +44,7 @@ class ImageViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
+    """ Image ViewSet """
     queryset = models.Image.objects.all()
     serializer_class = serializers.ImageSerializer
     permission_classes = (IsStaffOrReadOnly,)

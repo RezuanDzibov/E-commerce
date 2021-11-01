@@ -1,4 +1,3 @@
-from rest_framework import validators
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -9,7 +8,7 @@ class IsAuthenticatedMixin:
 
 
 class SerializerByAction:
-    serializer_classes = None
+    default_serializer_class = None
 
     def get_serializer_class(self):
-        return self.serializer_classes.get(self.action, self.serializer_class)
+        return self.serializer_classes.get(self.action, self.default_serializer_class)

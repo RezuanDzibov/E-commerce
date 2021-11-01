@@ -5,13 +5,22 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 def get_upload_path(instance, filename):
+    """ Construct image path by product name and filename """
     return f"product_images/{instance.product.name[:50]}/{filename}"
 
 
 class Category(MPTTModel):
-    name = models.CharField(max_length=300)
-    slug = models.SlugField(unique=True, blank=True)
-    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children")
+    """ Category model"""
+    name = models.CharField(max_length=300, verbose_name="Name")
+    slug = models.SlugField(unique=True, blank=True, verbose_name="Slug")
+    parent = TreeForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="children",
+        verbose_name="Parent category"
+    )
 
     class Meta:
         verbose_name = "Category"
@@ -29,14 +38,20 @@ class Category(MPTTModel):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=300)
-    slug = models.SlugField(unique=True, blank=True, help_text="You can leave it blank.")
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
-    small_descpription = models.TextField(max_length=5000, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    available = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    """ Product model """
+    name = models.CharField(max_length=300, verbose_name="Name")
+    slug = models.SlugField(unique=True, blank=True, help_text="You can leave it blank.", verbose_name="Slug")
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products", verbose_name="Category")
+    small_description = models.TextField(
+        max_length=5000,
+        blank=True,
+        help_text="Small description about product",
+        verbose_name="Small description"
+    )
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Price")
+    available = models.BooleanField(default=True, help_text="Is the product available", verbose_name="Available")
+    created = models.DateTimeField(auto_now_add=True, help_text="Created date and time", verbose_name="Created")
+    updated = models.DateTimeField(auto_now=True, help_text="Updated date and time", verbose_name="Updated")
 
     class Meta:
         verbose_name = "Product"
@@ -55,9 +70,10 @@ class Product(models.Model):
 
 
 class Image(models.Model):
+    """ Image model """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to=get_upload_path)
-    alt_text = models.CharField(verbose_name="Alturnative text", max_length=255, null=True)
+    alt_text = models.CharField(verbose_name="Alternative text", max_length=255, null=True)
 
     class Meta:
         verbose_name = "Image"

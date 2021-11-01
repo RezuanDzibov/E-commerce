@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from . import services
 
 
-class CartItems(views.APIView):
+class CartProducts(views.APIView):
+    """ A view that returns products from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
@@ -12,7 +13,8 @@ class CartItems(views.APIView):
         return Response(items.data, status=status.HTTP_200_OK)
 
 
-class ClearCart(views.APIView):
+class ClearAllProductsFromCart(views.APIView):
+    """ A view that clears all products from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request):
@@ -20,19 +22,21 @@ class ClearCart(views.APIView):
         return Response(data={"detail": "Your cart been cleared."})
 
 
-class AddToCart(views.APIView):
+class AddProductToCart(views.APIView):
+    """ A view that add product product to requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        item = services.AddToCart(request=request).main()
+        item = services.AddItemToCart(request=request).main()
         return response.Response(data=item.data, status=status.HTTP_201_CREATED)
 
 
-class RemoveFromCart(views.APIView):
+class RemoveProductFromCart(views.APIView):
+    """ A view that remove product from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request, *args, **kwargs):
-        item = services.RemoveFromCart(request=request).main()
+        item = services.RemoveItemFromCart(request=request).main()
         if item is not None:
             return Response(data=item.data, status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_204_NO_CONTENT)
