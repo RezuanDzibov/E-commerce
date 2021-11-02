@@ -5,7 +5,7 @@ from . import services
 
 
 class CartProducts(views.APIView):
-    """ A view that returns products from requested customer's shopping cart """
+    """ The view that responses products from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
@@ -14,7 +14,7 @@ class CartProducts(views.APIView):
 
 
 class ClearAllProductsFromCart(views.APIView):
-    """ A view that clears all products from requested customer's shopping cart """
+    """ The view that clears all products from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request):
@@ -23,7 +23,7 @@ class ClearAllProductsFromCart(views.APIView):
 
 
 class AddProductToCart(views.APIView):
-    """ A view that add product product to requested customer's shopping cart """
+    """ The view that adds product to requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -32,7 +32,7 @@ class AddProductToCart(views.APIView):
 
 
 class RemoveProductFromCart(views.APIView):
-    """ A view that remove product from requested customer's shopping cart """
+    """ The view that remove product from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request, *args, **kwargs):

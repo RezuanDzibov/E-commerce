@@ -4,6 +4,7 @@ from src.order.services import return_orders
 
 
 class CartItemsAndOrders(views.APIView):
+    """ The view responses products and orders related to requested customer """
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):

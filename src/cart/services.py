@@ -11,19 +11,19 @@ from src.core.services_mixins import SerializerMixin, serialize_data, validate_s
 
 
 def return_cart_items(request) -> ItemSerializer:
-    """ Function for returning items from customer's cart """
+    """ The function for returning items from customer's cart """
     items = request.user.cart.items.all()
     serialized_items = ItemSerializer(items, many=True)
     return serialized_items
 
 
 def clear_cart(request):
-    """ Function for cleaning customer's cart """
+    """ The function for cleaning customer's cart """
     request.user.cart.items.all().delete()
 
 
 class AddItemToCart:
-    """ Class for add item to customer cart or update of quantity products in cart """
+    """ The class for add item to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
@@ -62,7 +62,7 @@ class AddItemToCart:
 
 
 class RemoveItemFromCart:
-    """ Class for remove product to customer cart or update of quantity products in cart """
+    """ The class for remove product to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 

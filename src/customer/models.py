@@ -4,8 +4,9 @@ from django.db import models
 
 
 class CustomerManager(BaseUserManager):
-
+    """ Customer Manager  """
     def create_user(self, first_name, last_name, email, password, **extra_fields):
+        """ The method creates simple customer """
         if not email:
             raise ValueError("The email must be set")
         first_name = first_name.capitalize()
@@ -18,6 +19,7 @@ class CustomerManager(BaseUserManager):
         return user
 
     def create_superuser(self, first_name, last_name, email, password, **extra_fields):
+        """ The method create superuser """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -30,6 +32,7 @@ class CustomerManager(BaseUserManager):
 
 
 class Customer(AbstractUser):
+    """ Customer user model """
     username = None
     first_name = models.CharField(max_length=255, verbose_name="First name")
     last_name = models.CharField(max_length=255, verbose_name="Last name")
