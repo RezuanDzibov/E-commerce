@@ -8,8 +8,8 @@ from .models import Cart
 class ItemInline(GenericTabularInline):
     """ Generic tabular inline for Item """
     model = Item
-    fields = ("product", "quantity", "item_price", "total_price")
-    readonly_fields = ("product", "item_price", "total_price")
+    fields = ("product", "quantity", "product_price", "total_price")
+    readonly_fields = ("product", "product_price", "total_price")
     exclude = ('content_type', 'object_id',)
 
 

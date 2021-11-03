@@ -4,10 +4,6 @@ from src.item.serializers import ItemSerializer
 from .models import Order
 
 
-class ItemIDsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.IntegerField(min_value=0))
-
-
 class AddtoOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -16,7 +12,7 @@ class AddtoOrderSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = ItemSerializer(many=True)
+    products = ItemSerializer(many=True)
 
     class Meta:
         model = Order
@@ -30,7 +26,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "postal_code",
             "payed",
             "delivery_status",
-            "items"
+            "products"
         )
 
 

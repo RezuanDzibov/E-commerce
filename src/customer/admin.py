@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from . import models
 from .forms import CustomerChangeForm, CustomerCreationForm
+from . import models
 
 
 class CustomerAdmin(UserAdmin):

@@ -5,11 +5,12 @@ from src.product.models import Product
 
 
 class Item(models.Model):
+    """ Item model with polymorphic relationship to Order, Cart """
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-    product = models.ForeignKey(Product, related_name="product_items", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    product = models.ForeignKey(Product, related_name="product_items", on_delete=models.CASCADE, verbose_name="Product")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Quantity")
 
     class Meta:
         verbose_name = "Item"
@@ -19,7 +20,7 @@ class Item(models.Model):
         return f"{self.product.name} {self.quantity}"
 
     @property
-    def item_price(self):
+    def product_price(self):
         return self.product.price
 
     @property

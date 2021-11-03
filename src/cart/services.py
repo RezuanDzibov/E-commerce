@@ -7,10 +7,10 @@ from src.cart.serializers import CartProductAddSerializer, CartProductRemoveSeri
 from src.item.models import Item
 from src.item.serializers import ItemSerializer
 from src.product.models import Product
-from src.core.services_mixins import SerializerMixin, serialize_data, validate_serializer
+from src.core.services_mixins import serialize_data, validate_serializer
 
 
-def return_cart_items(request) -> ItemSerializer:
+def return_cart_products(request) -> ItemSerializer:
     """ The function for returning items from customer's cart """
     items = request.user.cart.items.all()
     serialized_items = ItemSerializer(items, many=True)
@@ -18,12 +18,12 @@ def return_cart_items(request) -> ItemSerializer:
 
 
 def clear_cart(request):
-    """ The function for cleaning customer's cart """
+    """ The function cleaning requested customer's cart """
     request.user.cart.items.all().delete()
 
 
 class AddItemToCart:
-    """ The class for add item to customer cart or update of quantity products in cart """
+    """ The class adds item to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
@@ -62,13 +62,13 @@ class AddItemToCart:
 
 
 class RemoveItemFromCart:
-    """ The class for remove product to customer cart or update of quantity products in cart """
+    """ The class removes product to customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
     def main(self) -> Optional[ItemSerializer]:
         request_data_serializer = serialize_data(serializer_class=CartProductRemoveSerializer, data=self.request.data)
-        product_qty = self.pop_product_qty_from_reuqest_data(request_data_serializer)
+        product_qty = self.pop_product_qty_from_request_data(request_data_serializer)
         item = self.return_item_from_cart(request_data_serializer)
         if product_qty is not None:
             item = self.reduce_quantity_of_product(item, product_qty)
@@ -76,7 +76,7 @@ class RemoveItemFromCart:
         else:
             self.remove_product(item)
 
-    def pop_product_qty_from_reuqest_data(self, request_data_serializer) -> int:
+    def pop_product_qty_from_request_data(self, request_data_serializer) -> int:
         product_qty = request_data_serializer.data.get("product_qty", None)
         return product_qty
 

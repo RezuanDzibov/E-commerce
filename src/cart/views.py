@@ -9,7 +9,7 @@ class CartProducts(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        items = services.return_cart_items(request)
+        items = services.return_cart_products(request)
         return Response(items.data, status=status.HTTP_200_OK)
 
 

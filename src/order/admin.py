@@ -7,8 +7,8 @@ from .models import Order
 
 class ItemInline(GenericTabularInline):
     model = Item
-    fields = ("product", "quantity", "item_price", "total_price")
-    readonly_fields = ("product", "quantity", "item_price", "total_price")
+    fields = ("product", "quantity", "product_price", "total_price")
+    readonly_fields = ("product", "quantity", "product_price", "total_price")
     exclude = ('content_type', 'object_id',)
 
 

@@ -51,7 +51,7 @@ class CreateOrder(SerializerMixin):
         raise exceptions.NotFound("You don't have so items in your cart")
 
     def create_order(self) -> Order:
-        serializer = validate_serializer(serialize_data(serializer_class=AddtoOrderSerializer, data=self.data, many_objects=True))
+        serializer = validate_serializer(serialize_data(serializer_class=AddtoOrderSerializer, data=self.data))
         order = Order.objects.create(
             customer=self.request.user,
             **serializer.validated_data,

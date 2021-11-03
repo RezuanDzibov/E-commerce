@@ -9,7 +9,7 @@ Customer = get_user_model()
 
 class Cart(models.Model):
     """ Customer cart """
-    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="cart")
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="cart", verbose_name="Customer")
     items = GenericRelation(Item, related_query_name="cart")
 
     class Meta:
