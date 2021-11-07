@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from . import models
 
 
@@ -68,7 +69,7 @@ class CategoryRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Category
-        fields = ("name", "slug", "parent", "products")
+        fields = ("id", "name", "slug", "parent", "products")
 
 
 class CategoryCreateUpdateSerializer(serializers.ModelSerializer):

@@ -7,7 +7,7 @@ class CreateOrder(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.CreateOrder(request).main()
+        order = services.CreateOrder(request).execute()
         return response.Response(data=order.data, status=status.HTTP_201_CREATED)
 
 
@@ -15,5 +15,5 @@ class PayOrder(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        order = services.PayOrder(request).main()
+        order = services.PayOrder(request).execute()
         return response.Response(data=order.data)

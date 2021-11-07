@@ -1,10 +1,11 @@
 from rest_framework import serializers
+
 from src.item.serializers import ItemSerializer
 
 from .models import Order
 
 
-class AddtoOrderSerializer(serializers.ModelSerializer):
+class AddToOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
@@ -12,7 +13,7 @@ class AddtoOrderSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    products = ItemSerializer(many=True)
+    items = ItemSerializer(many=True)
 
     class Meta:
         model = Order
@@ -22,13 +23,19 @@ class OrderSerializer(serializers.ModelSerializer):
             "last_name", 
             "phone", 
             "address", 
-            "city", 
+            "city",
             "postal_code",
-            "payed",
+            "paid",
             "delivery_status",
-            "products"
+            "items"
         )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        products = representation.pop("items")
+        representation["products"] = products
+        return representation
 
 
 class PayOrderSerializer(serializers.Serializer):
-    id = serializers.IntegerField(min_value=0)
+    id = serializers.IntegerField(min_value=1)

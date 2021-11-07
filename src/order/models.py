@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+
 from phonenumber_field.modelfields import PhoneNumberField
+
 from src.item.models import Item
 
 
@@ -9,24 +11,25 @@ Customer = get_user_model()
 
 
 class Order(models.Model):
+    """ Order model  """
     delivery_statuses = (
-        ("processed", "Processed"),
+        ("processing", "Processing"),
         ("delivering", "Delivering"),
         ("delivered", "Delivered")
     )
 
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="orders")
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    phone = PhoneNumberField()
-    address = models.CharField(max_length=300)
-    city = models.CharField(max_length=300)
-    postal_code = models.SmallIntegerField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    payed = models.BooleanField(default=False)
-    delivery_status = models.CharField(max_length=10, choices=delivery_statuses)
-    items = GenericRelation(Item, related_query_name="order")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="orders", verbose_name="Customer")
+    first_name = models.CharField(max_length=100, verbose_name="First Name")
+    last_name = models.CharField(max_length=100, verbose_name="Last Name")
+    phone = PhoneNumberField(verbose_name="Phone Number")
+    address = models.CharField(max_length=300, verbose_name="Address")
+    city = models.CharField(max_length=300, verbose_name="City")
+    postal_code = models.SmallIntegerField(verbose_name="Postal Code")
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Created date and time")
+    updated = models.DateTimeField(auto_now=True, verbose_name="Updated date and time")
+    paid = models.BooleanField(default=False, verbose_name="Is paid")
+    delivery_status = models.CharField(max_length=10, choices=delivery_statuses, verbose_name="Delivery status")
+    items = GenericRelation(Item, related_query_name="order", verbose_name="Products")
 
     class Meta:
         verbose_name = "Order"
@@ -37,6 +40,7 @@ class Order(models.Model):
 
     @property
     def order_total_price(self):
+        """ Order total price """
         total_price = 0
         items = self.items.values("product__price", "quantity")
         for item in items:

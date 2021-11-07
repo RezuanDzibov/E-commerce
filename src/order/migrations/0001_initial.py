@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('postal_code', models.SmallIntegerField()),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('payed', models.BooleanField(default=False)),
+                ('paid', models.BooleanField(default=False)),
                 ('delivery_status', models.CharField(choices=[('processed', 'Processed'), ('delivering', 'Delivering'), ('delivered', 'Delivered')], max_length=10)),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orders', to=settings.AUTH_USER_MODEL)),
             ],

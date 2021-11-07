@@ -1,6 +1,7 @@
 from django_filters import rest_framework as django_filters
 from rest_framework import filters, mixins, pagination, viewsets
-from src.core import view_mixins
+
+from src.core.mixins import SerializerByActionMixin
 from src.core.permssions import IsStaffOrReadOnly
 
 from . import filters as app_filters
@@ -8,7 +9,7 @@ from . import models
 from . import serializers
 
 
-class CategoryViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
+class CategoryViewSet(SerializerByActionMixin, viewsets.ModelViewSet):
     """ Category ViewSet """
     queryset = models.Category.objects.all()
     default_serializer_class = serializers.CategoryCreateUpdateSerializer
@@ -23,7 +24,7 @@ class CategoryViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
     pagination_class = pagination.PageNumberPagination
 
 
-class ProductViewSet(view_mixins.SerializerByAction, viewsets.ModelViewSet):
+class ProductViewSet(SerializerByActionMixin, viewsets.ModelViewSet):
     """ Product ViewSet """
     queryset = models.Product.objects.all()
     default_serializer_class = serializers.ProductCreateUpdateSerializer
