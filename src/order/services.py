@@ -2,7 +2,6 @@ from typing import Type
 
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
-
 from rest_framework import exceptions
 from rest_framework.serializers import Serializer
 

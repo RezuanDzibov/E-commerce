@@ -6,7 +6,7 @@ from src.product.models import Product
 
 
 class Item(models.Model):
-    """ Item model with polymorphic relationship to Order, Cart """
+    """ Item model with polymorphic relationship to Order and Cart """
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")

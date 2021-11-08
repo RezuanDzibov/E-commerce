@@ -4,6 +4,7 @@ from .models import Item
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    """ Item Serializer """
     name = serializers.CharField(source="product.name")
     quantity = serializers.IntegerField(max_value=10, min_value=1)
 

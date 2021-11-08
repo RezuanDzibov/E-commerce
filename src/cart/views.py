@@ -27,7 +27,7 @@ class AddProductToCart(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        item = services.AddItemToCart(request=request).main()
+        item = services.AddItemToCart(request=request).execute()
         return response.Response(data=item.data, status=status.HTTP_201_CREATED)
 
 
@@ -36,7 +36,7 @@ class RemoveProductFromCart(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def delete(self, request, *args, **kwargs):
-        item = services.RemoveItemFromCart(request=request).main()
+        item = services.RemoveItemFromCart(request=request).execute()
         if item is not None:
             return Response(data=item.data, status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_204_NO_CONTENT)

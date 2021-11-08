@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 from .yasg import urlpatterns as doc_urls
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
@@ -15,7 +14,6 @@ urlpatterns = [
     path('api/v1/order/', include('src.order.urls', namespace='order')),
 
 ]
-
 
 urlpatterns += doc_urls
 
