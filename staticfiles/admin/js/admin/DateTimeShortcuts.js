@@ -136,7 +136,7 @@
             // Create clock link div
             //
             // Markup looks like:
-            // <div id="clockbox1" class="clockbox module">
+            // <div order_id="clockbox1" class="clockbox module">
             //     <h2>Choose a time</h2>
             //     <ul class="timelist">
             //         <li><a href="#">Now</a></li>
@@ -264,12 +264,12 @@
             //
             // Markup looks like:
             //
-            // <div id="calendarbox3" class="calendarbox module">
+            // <div order_id="calendarbox3" class="calendarbox module">
             //     <h2>
             //           <a href="#" class="link-previous">&lsaquo;</a>
             //           <a href="#" class="link-next">&rsaquo;</a> February 2003
             //     </h2>
-            //     <div class="calendar" id="calendarin3">
+            //     <div class="calendar" order_id="calendarin3">
             //         <!-- (cal) -->
             //     </div>
             //     <div class="calendar-shortcuts">
