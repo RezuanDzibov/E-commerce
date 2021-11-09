@@ -18,7 +18,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = (
-            "id",
+            "order_id",
             "first_name", 
             "last_name", 
             "phone", 
@@ -38,4 +38,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class PayOrderSerializer(serializers.Serializer):
-    id = serializers.IntegerField(min_value=1)
+    order_id = serializers.IntegerField(min_value=1)
+
+
+class OrderStatusUpdateSerializer(serializers.Serializer):
+    order_id = serializers.IntegerField(min_value=1)
+    delivery_status = serializers.ChoiceField(choices=Order.delivery_statuses)

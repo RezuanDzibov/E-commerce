@@ -11,7 +11,7 @@ from src.core.exceptions import exception_raiser
 
 from .models import Order
 from .serializers import (AddToOrderSerializer, OrderSerializer,
-                          PayOrderSerializer)
+                          PayOrderSerializer, OrderStatusUpdateSerializer)
 
 
 def return_orders(request: HttpRequest) -> Type[Serializer]:
@@ -21,7 +21,7 @@ def return_orders(request: HttpRequest) -> Type[Serializer]:
 
 
 class CreateOrder:
-
+    """ The class creating order  """
     def __init__(self, request: HttpRequest):
         self.invalid_id_list = []
         self.valid_id_list = []
@@ -65,7 +65,7 @@ class CreateOrder:
             )
 
     def return_item(self, items_id_list: list) -> QuerySet:
-        items = Item.objects.filter(id__in=items_id_list, cart__id=self.request.user.cart.id)
+        items = Item.objects.filter(id__in=items_id_list, cart__id=self.request.user.cart.order_id)
         if items.exists():
             return items
         exception_raiser(exception_class=exceptions.NotFound, msg="You don't have so items in your cart")
@@ -86,6 +86,7 @@ class CreateOrder:
 
 
 class PayOrder:
+    """ The class sets paid is true """
     def __init__(self, request):
         self.request = request
 
@@ -96,7 +97,11 @@ class PayOrder:
 
     def set_paid_is_true(self, pay_order_serializer: Type[Serializer]) -> Type[Serializer]:
         try:
-            order = Order.objects.get(customer=self.request.user, id=pay_order_serializer.data.get("id"), paid=False)
+            order = Order.objects.get(
+                customer=self.request.user,
+                id=pay_order_serializer.data.get("order_id"),
+                paid=False
+            )
             order.paid = True
             order.save()
             order_serializer = serialize_objects(serializer_class=OrderSerializer, objects=order)
@@ -104,5 +109,44 @@ class PayOrder:
         except Order.DoesNotExist:
             exception_raiser(
                 exception_class=exceptions.NotFound,
-                msg=f"""You don't have such an order with the id {pay_order_serializer.data.get("id")}."""
+                msg=f"""You don't have such an order with the order_id {pay_order_serializer.data.get("order_id")}."""
             )
+
+
+class UpdateOrderStatus:
+    """ The class updating order's delivery status """
+
+    def __init__(self, request):
+        self.request = request
+
+    def execute(self):
+        order_id, delivery_status = list(map(self.get_order_serializer().data.get, ("order_id", "delivery_status")))
+        order = self.get_order(order_id)
+        self.update_order_status(order, delivery_status)
+        return {"order_id": order_id, "delivery_status": order[0].delivery_status}
+
+    def get_order_serializer(self):
+        return validate_serializer(
+            serialize_data(serializer_class=OrderStatusUpdateSerializer, data=self.request.data)
+        )
+
+    def is_valid(self, order, order_id):
+        if not order.exists():
+            exception_raiser(
+                exception_class=exceptions.NotFound,
+                msg=f"""You don't have such an order with the order_id {order_id}."""
+            )
+        if order[0].get("paid") is not True:
+            exception_raiser(exception_class=exceptions.ValidationError, msg=f"The order with id {order_id} hasn't paid")
+        return True
+
+    def get_order(self, order_id):
+        order = Order.objects.filter(
+            customer=self.request.user,
+            id=order_id
+        ).values("paid", "delivery_status")
+        if self.is_valid(order, order_id):
+            return order
+
+    def update_order_status(self, order_status, delivery_status):
+        order_status.update(delivery_status=delivery_status)

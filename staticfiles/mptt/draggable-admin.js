@@ -110,7 +110,7 @@ django.jQuery(function($){
                 // attach dragged item to mouse
                 var cloned = originalRow.html();
                 if($('#ghost').length == 0) {
-                    $('<div id="ghost"></div>').appendTo('body');
+                    $('<div order_id="ghost"></div>').appendTo('body');
                 }
                 $('#ghost').html(cloned).css({
                     'opacity': .8,
@@ -129,7 +129,7 @@ django.jQuery(function($){
 
                 // check if drag-line element already exists, else append
                 if($('#drag-line').length < 1) {
-                    $('body').append('<div id="drag-line"><span></span></div>');
+                    $('body').append('<div order_id="drag-line"><span></span></div>');
                 }
 
                 // loop trough all rows

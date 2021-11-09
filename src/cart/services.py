@@ -49,7 +49,7 @@ class AddItemToCart:
             return exception_raiser(exception_class=exceptions.NotFound, msg="No such product.")
 
     def get_item(self, product) -> QuerySet:
-        item = Item.objects.filter(cart__id=self.request.user.cart.id, product=product)
+        item = Item.objects.filter(cart__id=self.request.user.cart.order_id, product=product)
         return item
 
     def create_item(self, product, request_data_serializer) -> Item:
@@ -66,7 +66,7 @@ class AddItemToCart:
 
 
 class RemoveItemFromCart:
-    """ The class removes product to customer cart or update of quantity products in cart """
+    """ The class removes product from customer cart or update of quantity products in cart """
     def __init__(self, request):
         self.request = request
 
@@ -86,7 +86,7 @@ class RemoveItemFromCart:
 
     def return_item_from_cart(self, request_data_serializer) -> Item:
         item = Item.objects.filter(
-            cart__id=self.request.user.cart.id,
+            cart__id=self.request.user.cart.order_id,
             product__slug=request_data_serializer.data["product_slug"]
         )
         if item.exists():
