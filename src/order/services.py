@@ -123,30 +123,44 @@ class UpdateOrderStatus:
         order_id, delivery_status = list(map(self.get_order_serializer().data.get, ("order_id", "delivery_status")))
         order = self.get_order(order_id)
         self.update_order_status(order, delivery_status)
-        return {"order_id": order_id, "delivery_status": order[0].delivery_status}
+        return {"order_id": order_id, "delivery_status": order.delivery_status}
 
     def get_order_serializer(self):
         return validate_serializer(
             serialize_data(serializer_class=OrderStatusUpdateSerializer, data=self.request.data)
         )
 
-    def is_valid(self, order, order_id):
-        if not order.exists():
+    # def is_valid(self, order, order_id):
+    #     if not order.exists():
+    #         exception_raiser(
+    #             exception_class=exceptions.NotFound,
+    #             msg=f"""You don't have such an order with the order_id {order_id}."""
+    #         )
+    #     if order[0].get("paid") is not True:
+    #
+    #     return True
+
+    # def get_order(self, order_id):
+    #     order = Order.objects.filter(
+    #         customer=self.request.user,
+    #         id=order_id
+    #     ).values("paid", "delivery_status")
+    #     if self.is_valid(order, order_id):
+    #         return order
+
+    def get_order(self, order_id):
+        try:
+            order = Order.objects.get(id=order_id)
+            if order.paid == False:
+                exception_raiser(exception_class=exceptions.ValidationError,
+                                 msg=f"The order with id {order_id} hasn't paid")
+            return order
+        except Order.DoesNotExist:
             exception_raiser(
                 exception_class=exceptions.NotFound,
                 msg=f"""You don't have such an order with the order_id {order_id}."""
             )
-        if order[0].get("paid") is not True:
-            exception_raiser(exception_class=exceptions.ValidationError, msg=f"The order with id {order_id} hasn't paid")
-        return True
 
-    def get_order(self, order_id):
-        order = Order.objects.filter(
-            customer=self.request.user,
-            id=order_id
-        ).values("paid", "delivery_status")
-        if self.is_valid(order, order_id):
-            return order
-
-    def update_order_status(self, order_status, delivery_status):
-        order_status.update(delivery_status=delivery_status)
+    def update_order_status(self, order, delivery_status):
+        order.delivery_status = delivery_status
+        order.save()

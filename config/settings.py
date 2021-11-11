@@ -35,11 +35,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'phonenumber_field',
 
-    'src.cart',
-    'src.customer',
-    'src.item',
-    'src.order',
-    'src.product',
+    'src.cart.apps.CartConfig',
+    'src.customer.apps.CustomerConfig',
+    'src.item.apps.ItemConfig',
+    'src.order.apps.OrderConfig',
+    'src.product.apps.ProductConfig',
 ]
 
 
@@ -137,6 +137,13 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", None)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
 EMAIL_PORT = os.environ.get("EMAIL_PORT", None)
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
