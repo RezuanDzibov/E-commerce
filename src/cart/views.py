@@ -13,7 +13,7 @@ class CartProducts(views.APIView):
 
     @swagger_auto_schema(responses={'200': ItemSerializer(many=True)})
     def get(self, request):
-        items = services.return_cart_products(request)
+        items = services.get_cart_products(request)
         return Response(items.data, status=status.HTTP_200_OK)
 
 

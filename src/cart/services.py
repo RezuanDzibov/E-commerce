@@ -12,7 +12,7 @@ from src.core.serialize_utils import serialize_objects, serialize_data, validate
 from src.core.exceptions import exception_raiser
 
 
-def return_cart_products(request) -> Type[Serializer]:
+def get_cart_products(request) -> Type[Serializer]:
     """ The function for returning items from customer's cart """
     items = request.user.cart.items.all()
     items_serializer = serialize_objects(ItemSerializer, objects=items, many_objects=True)
@@ -49,7 +49,7 @@ class AddItemToCart:
             return exception_raiser(exception_class=exceptions.NotFound, msg="No such product.")
 
     def get_item(self, product) -> QuerySet:
-        item = Item.objects.filter(cart__id=self.request.user.cart.order_id, product=product)
+        item = Item.objects.filter(cart__id=self.request.user.cart.id, product=product)
         return item
 
     def create_item(self, product, request_data_serializer) -> Item:
@@ -86,7 +86,7 @@ class RemoveItemFromCart:
 
     def return_item_from_cart(self, request_data_serializer) -> Item:
         item = Item.objects.filter(
-            cart__id=self.request.user.cart.order_id,
+            cart__id=self.request.user.cart.id,
             product__slug=request_data_serializer.data["product_slug"]
         )
         if item.exists():

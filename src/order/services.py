@@ -14,7 +14,7 @@ from .serializers import (AddToOrderSerializer, OrderSerializer,
                           PayOrderSerializer, OrderStatusUpdateSerializer)
 
 
-def return_orders(request: HttpRequest) -> Type[Serializer]:
+def get_orders(request: HttpRequest) -> Type[Serializer]:
     orders = Order.objects.filter(customer=request.user)
     orders_serializer = serialize_objects(serializer_class=OrderSerializer, objects=orders, many_objects=True)
     return orders_serializer
