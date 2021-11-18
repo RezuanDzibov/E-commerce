@@ -12,7 +12,6 @@ urlpatterns = [
     path('api/v1/customer/', include('src.customer.urls', namespace='customer')),
     path('api/v1/product/', include('src.product.urls', namespace='product')),
     path('api/v1/order/', include('src.order.urls', namespace='order')),
-
 ]
 
 urlpatterns += doc_urls

@@ -1,4 +1,4 @@
-from typing import Optional, Union, Type
+from typing import Union, Type
 
 from django.db.models import F, QuerySet
 from rest_framework import exceptions
@@ -70,7 +70,7 @@ class RemoveItemFromCart:
     def __init__(self, request):
         self.request = request
 
-    def execute(self) -> Optional[ItemSerializer]:
+    def execute(self) -> Type[Serializer]:
         request_data_serializer = serialize_data(serializer_class=CartProductRemoveSerializer, data=self.request.data)
         product_qty = self.pop_product_qty_from_request_data(request_data_serializer)
         item = self.return_item_from_cart(request_data_serializer)

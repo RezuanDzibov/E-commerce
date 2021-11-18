@@ -69,7 +69,7 @@ class CategoryRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Category
-        fields = ("order_id", "name", "slug", "parent", "products")
+        fields = ("id", "name", "slug", "parent", "products")
 
 
 class CategoryCreateUpdateSerializer(serializers.ModelSerializer):

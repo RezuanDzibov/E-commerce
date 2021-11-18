@@ -51,5 +51,6 @@ USER app
 
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 
-
 CMD gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+
+CMD ["celery", "-A", "config", "worker", "-l", "info", "-P", "eventlet"]
