@@ -1,4 +1,4 @@
-from rest_framework import permissions, response, status, views, generics
+from rest_framework import permissions, response, status, views
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
@@ -27,23 +27,27 @@ class ClearAllProductsFromCart(views.APIView):
         return Response(data={"detail": "Your cart been cleared."}, status=status.HTTP_204_NO_CONTENT)
 
 
-class AddProductToCart(generics.GenericAPIView):
+class AddProductToCart(views.APIView):
     """ The view that adds product to requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.CartProductAddSerializer
 
-    @swagger_auto_schema(responses={'201': ItemSerializer(many=True)})
+    @swagger_auto_schema(
+        query_serializer=serializers.CartProductAddSerializer(),
+        responses={'201': ItemSerializer(many=True)}
+    )
     def post(self, request, *args, **kwargs):
         item = services.AddItemToCart(request=request).execute()
         return response.Response(data=item.data, status=status.HTTP_201_CREATED)
 
 
-class RemoveProductFromCart(generics.GenericAPIView):
+class RemoveProductFromCart(views.APIView):
     """ The view that remove product from requested customer's shopping cart """
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.CartProductRemoveSerializer
 
-    @swagger_auto_schema(responses={'201': ItemSerializer(many=True), '204': 'The product has just been deleted.'})
+    @swagger_auto_schema(
+        query_serializer=serializers.CartProductRemoveSerializer(),
+        responses={'201': ItemSerializer(many=True), '204': 'The product has just been deleted.'}
+    )
     def delete(self, request, *args, **kwargs):
         item = services.RemoveItemFromCart(request=request).execute()
         if item is not None:

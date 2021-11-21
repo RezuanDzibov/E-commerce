@@ -1,3 +1,4 @@
+from drf_yasg import openapi
 from rest_framework import serializers
 
 from src.item.serializers import ItemSerializer
@@ -5,7 +6,7 @@ from src.item.serializers import ItemSerializer
 from .models import Order
 
 
-class AddToOrderSerializer(serializers.ModelSerializer):
+class CreateOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
@@ -32,8 +33,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        products = representation.pop("items")
-        representation["products"] = products
+        representation["products"] = representation.pop("items")
         return representation
 
 

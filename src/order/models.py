@@ -13,6 +13,7 @@ Customer = get_user_model()
 class Order(models.Model):
     """ Order model  """
     delivery_statuses = (
+        ("unpaid", "Unpaid"),
         ("processing", "Processing"),
         ("delivering", "Delivering"),
         ("delivered", "Delivered")
@@ -24,11 +25,16 @@ class Order(models.Model):
     phone = PhoneNumberField(verbose_name="Phone Number")
     address = models.CharField(max_length=300, verbose_name="Address")
     city = models.CharField(max_length=300, verbose_name="City")
-    postal_code = models.SmallIntegerField(verbose_name="Postal Code")
+    postal_code = models.IntegerField(verbose_name="Postal Code")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Created date and time")
     updated = models.DateTimeField(auto_now=True, verbose_name="Updated date and time")
     paid = models.BooleanField(default=False, verbose_name="Is paid")
-    delivery_status = models.CharField(max_length=10, choices=delivery_statuses, verbose_name="Delivery status")
+    delivery_status = models.CharField(
+        max_length=10,
+        choices=delivery_statuses,
+        verbose_name="Delivery status",
+        default="unpaid"
+    )
     items = GenericRelation(Item, related_query_name="order", verbose_name="Products")
 
     class Meta:

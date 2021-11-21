@@ -1,0 +1,11 @@
+Hello! This message informs you that an order with the ID: {{ order_id }} has been created.
+The order processing will start when you pay for it.
+Order info:
+    Order total price: {{ order_total_price }}
+    {% for product_item_info in product_items_info %}
+        {% for product_item in product_item_info %}
+            {% for k, v in product_item.items %}
+                    {{ k }}: {{ v }}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
