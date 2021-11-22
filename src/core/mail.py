@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -16,7 +18,13 @@ def send_delivery_status_by_mail(subject: str, order_id: int, delivery_status: s
     )
 
 
-def send_notify_about_order(subject, order_id, order_total_price, product_items_info, receiver_email):
+def send_notify_about_order(
+        subject: str,
+        order_id: int,
+        order_total_price: Decimal,
+        product_items_info: list,
+        receiver_email: str
+) -> None:
     message = render_to_string("mail/order_info_message.html",
         {
             "order_id": order_id,

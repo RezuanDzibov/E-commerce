@@ -38,13 +38,13 @@ class CreateOrder:
         self.send_notify_about_order(order)
         return serialize_objects(serializer_class=OrderSerializer, objects=order)
 
-    def is_id_list_valid(self, invalid_id_list):
+    def is_id_list_valid(self, invalid_id_list: list) -> bool:
         if len(invalid_id_list) > 0:
             return False
         else:
             return True
 
-    def validate_product_item_id(self, item_id: int, valid_id_list, invalid_id_list):
+    def validate_product_item_id(self, item_id: int, valid_id_list: list, invalid_id_list: list) -> None:
         try:
             item_id = int(item_id)
             if item_id > 0:
@@ -66,7 +66,7 @@ class CreateOrder:
             )
         return valid_id_list
 
-    def get_product_items(self, item_id_list) -> QuerySet:
+    def get_product_items(self, item_id_list: list) -> QuerySet:
         items = Item.objects.filter(id__in=item_id_list, cart=self.request.user.cart)
         if items.exists():
             return items
@@ -85,7 +85,7 @@ class CreateOrder:
             item.content_object = order
             item.save()
 
-    def send_notify_about_order(self, order):
+    def send_notify_about_order(self, order: Order) -> None:
         product_items = order.items.values("product__name", "product__price", "quantity")
         product_items_info = []
         for product_item in product_items:
@@ -107,7 +107,7 @@ class CreateOrder:
 class PayOrder:
     """ The class sets paid is true """
 
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
     def execute(self) -> Type[Serializer]:
@@ -137,7 +137,7 @@ class PayOrder:
 class UpdateOrderStatus:
     """ The class updating order's delivery status """
 
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
     def execute(self) -> Type[Serializer]:
@@ -146,12 +146,12 @@ class UpdateOrderStatus:
         self.update_order_status(order, delivery_status)
         return serialize_objects(serializer_class=OrderSerializer, objects=order)
 
-    def get_order_serializer(self):
+    def get_order_serializer(self) -> Type[Serializer]:
         return validate_serializer(
             serialize_data(serializer_class=OrderStatusUpdateSerializer, data=self.request.data)
         )
 
-    def get_order(self, order_id):
+    def get_order(self, order_id: int) -> Order:
         try:
             order = Order.objects.get(id=order_id)
             if order.paid == False:
@@ -164,6 +164,6 @@ class UpdateOrderStatus:
                 msg=f"""You don't have such an order with the order_id {order_id}."""
             )
 
-    def update_order_status(self, order, delivery_status):
+    def update_order_status(self, order: Order, delivery_status: str) -> None:
         order.delivery_status = delivery_status
         order.save()

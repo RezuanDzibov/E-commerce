@@ -1,6 +1,7 @@
 from typing import Union, Type
 
 from django.db.models import F, QuerySet
+from django.http import HttpRequest
 from rest_framework import exceptions
 from rest_framework.serializers import Serializer
 
@@ -12,21 +13,21 @@ from src.core.serialize_utils import serialize_objects, serialize_data, validate
 from src.core.exceptions import exception_raiser
 
 
-def get_cart_products(request) -> Type[Serializer]:
+def get_cart_products(request: HttpRequest) -> Type[Serializer]:
     """ The function for returning items from customer's cart """
     items = request.user.cart.items.all()
     items_serializer = serialize_objects(ItemSerializer, objects=items, many_objects=True)
     return items_serializer
 
 
-def clear_cart(request):
+def clear_cart(request: HttpRequest) -> None:
     """ The function cleaning requested customer's cart """
     request.user.cart.items.all().delete()
 
 
 class AddItemToCart:
     """ The class adds item to customer cart or update of quantity products in cart """
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
     def execute(self) -> Type[Serializer]:
@@ -41,18 +42,18 @@ class AddItemToCart:
             item = self.update_item(item, request_data_serializer)
         return serialize_objects(serializer_class=ItemSerializer, objects=item)
 
-    def get_product(self, request_data_serializer) -> Union[Product, exceptions.NotFound]:
+    def get_product(self, request_data_serializer: Type[Serializer]) -> Union[Product, exceptions.NotFound]:
         try:
             product = Product.objects.get(slug=request_data_serializer.data.get("product_slug"))
             return product
         except Product.DoesNotExist:
             return exception_raiser(exception_class=exceptions.NotFound, msg="No such product.")
 
-    def get_item(self, product) -> QuerySet:
+    def get_item(self, product: Product) -> QuerySet:
         item = Item.objects.filter(cart__id=self.request.user.cart.id, product=product)
         return item
 
-    def create_item(self, product, request_data_serializer) -> Item:
+    def create_item(self, product: Product, request_data_serializer: Type[Serializer]) -> Item:
         item = Item.objects.create(
             content_object=self.request.user.cart,
             product=product,
@@ -60,14 +61,14 @@ class AddItemToCart:
         )
         return item
 
-    def update_item(self, item, request_data_serializer) -> Item:
+    def update_item(self, item: Item, request_data_serializer: Type[Serializer]) -> Item:
         item.update(quantity=F("quantity") + request_data_serializer.data.get("product_qty"))
         return item[0]
 
 
 class RemoveItemFromCart:
     """ The class removes product from customer cart or update of quantity products in cart """
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
     def execute(self) -> Type[Serializer]:
@@ -80,7 +81,7 @@ class RemoveItemFromCart:
         else:
             self.remove_product(item)
 
-    def pop_product_qty_from_request_data(self, request_data_serializer) -> int:
+    def pop_product_qty_from_request_data(self, request_data_serializer: Type[Serializer]) -> int:
         product_qty = request_data_serializer.data.get("product_qty", None)
         return product_qty
 
@@ -94,11 +95,11 @@ class RemoveItemFromCart:
         else:
             raise exception_raiser(exception_class=exceptions.NotFound, msg="No such product.")
 
-    def reduce_quantity_of_product(self, item, product_qty) -> Type[Serializer]:
+    def reduce_quantity_of_product(self, item: Item, product_qty: int) -> Type[Serializer]:
         item.update(quantity=F("quantity") - product_qty)
         if int(item[0].quantity) == 0:
             item[0].delete()
         return serialize_objects(serializer_class=ItemSerializer, objects=item[0])
 
-    def remove_product(self, item):
+    def remove_product(self, item: Item):
         item[0].delete()

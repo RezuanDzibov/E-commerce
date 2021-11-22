@@ -1,5 +1,5 @@
+from django.http import HttpRequest
 from rest_framework import permissions, response, status, views
-from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
 from . import services
@@ -12,9 +12,9 @@ class CartProducts(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(responses={'200': ItemSerializer(many=True)})
-    def get(self, request):
+    def get(self, request: HttpRequest) -> response.Response:
         items = services.get_cart_products(request)
-        return Response(items.data, status=status.HTTP_200_OK)
+        return response.Response(items.data, status=status.HTTP_200_OK)
 
 
 class ClearAllProductsFromCart(views.APIView):
@@ -22,9 +22,9 @@ class ClearAllProductsFromCart(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(responses={'204': 'Your cart been cleared.'})
-    def delete(self, request):
+    def delete(self, request: HttpRequest) -> response.Response:
         services.clear_cart(request=request)
-        return Response(data={"detail": "Your cart been cleared."}, status=status.HTTP_204_NO_CONTENT)
+        return response.Response(data={"detail": "Your cart been cleared."}, status=status.HTTP_204_NO_CONTENT)
 
 
 class AddProductToCart(views.APIView):
@@ -35,7 +35,7 @@ class AddProductToCart(views.APIView):
         query_serializer=serializers.CartProductAddSerializer(),
         responses={'201': ItemSerializer(many=True)}
     )
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest) -> response.Response:
         item = services.AddItemToCart(request=request).execute()
         return response.Response(data=item.data, status=status.HTTP_201_CREATED)
 
@@ -48,8 +48,8 @@ class RemoveProductFromCart(views.APIView):
         query_serializer=serializers.CartProductRemoveSerializer(),
         responses={'201': ItemSerializer(many=True), '204': 'The product has just been deleted.'}
     )
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request: HttpRequest) -> response.Response:
         item = services.RemoveItemFromCart(request=request).execute()
         if item is not None:
-            return Response(data=item.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')
+            return response.Response(data=item.data, status=status.HTTP_201_CREATED)
+        return response.Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')
