@@ -25,7 +25,7 @@ This project is being developed by me as an educational one. And there may be so
 ![git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
 ![gitHub](https://img.shields.io/badge/github-292621?style=for-the-badge&logo=github)
 
-![vscode](https://img.shields.io/badge/VSCode-blue?style=for-the-badge&logo=visual-studio-code)
+![pycharm](https://img.shields.io/badge/PyCharm-blue?style=for-the-badge&logo=pycharm)
 
 ## The essence of the project and what it is.
 
