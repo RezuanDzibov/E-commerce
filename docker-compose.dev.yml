@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    expose:
+      - 8000
+    depends_on:
+      - db
+    env_file:
+      ./.env
+  db:
+    image: postgres:13.0
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      ./.env.prod.db
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    depends_on:
+      - web
+  celery:
+    build: .
+    command: celery -A proj worker -l info -P eventlet
+    depends_on:
+      - db
+      - redis
+#  nginx:
+#    build: ./nginx
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - static_volume:/home/app/web/static
+#      - media_volume:/home/app/web/media
+#    depends_on:
+#      - web
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  redis_data:

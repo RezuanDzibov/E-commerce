@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from src.item.models import Item
 
+from src.item.models import Item
 
 Customer = get_user_model()
 

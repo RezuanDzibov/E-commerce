@@ -1,6 +1,6 @@
 # Hello everyone.
 
-## Some words about it project.
+## Some words about this project.
 
 This project is being developed by me as an educational one. And there may be something not implemented at the proper level or should be done in a way (approach). Thank you for your attention.
 
@@ -25,7 +25,7 @@ This project is being developed by me as an educational one. And there may be so
 ![git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
 ![gitHub](https://img.shields.io/badge/github-292621?style=for-the-badge&logo=github)
 
-![pycharm](https://img.shields.io/badge/PyCharm-black?style=for-the-badge&logo=pycharm)
+![pycharm](https://img.shields.io/badge/PyCharm-green?style=for-the-badge&logo=pycharm)
 
 ## The essence of the project and what it is.
 
@@ -55,6 +55,6 @@ This project is being developed by me as an educational one. And there may be so
 
 ___
 
-### I hope it didn't work out. 
+### I hope it doesn't work out. 
 
 ![mem](https://c.tenor.com/BvNT-VXurjEAAAAd/meme-what-the-hell-is-this.gif)

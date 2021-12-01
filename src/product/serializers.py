@@ -71,6 +71,12 @@ class CategoryRetrieveSerializer(serializers.ModelSerializer):
         model = models.Category
         fields = ("id", "name", "slug", "parent", "products")
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.parent:
+            data["parent"] = instance.parent.name
+        return data
+
 
 class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
     """ Serializer for create and update category """

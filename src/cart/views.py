@@ -1,24 +1,24 @@
 from django.http import HttpRequest
-from rest_framework import permissions, response, status, views
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions, response, status, views
 
-from . import services
-from . import serializers
 from src.item.serializers import ItemSerializer
+from . import serializers
+from . import services
 
 
-class CartProducts(views.APIView):
-    """ The view that responses products from requested customer's shopping cart """
+class CartProductItems(views.APIView):
+    """All product items in requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(responses={'200': ItemSerializer(many=True)})
     def get(self, request: HttpRequest) -> response.Response:
-        items = services.get_cart_products(request)
-        return response.Response(items.data, status=status.HTTP_200_OK)
+        items = services.get_cart_product_items(request)
+        return response.Response(data={"product items": items}, status=status.HTTP_200_OK)
 
 
-class ClearAllProductsFromCart(views.APIView):
-    """ The view that clears all products from requested customer's shopping cart """
+class ClearAllProductItemsFromCart(views.APIView):
+    """Clear all products from requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(responses={'204': 'Your cart been cleared.'})
@@ -28,28 +28,41 @@ class ClearAllProductsFromCart(views.APIView):
 
 
 class AddProductToCart(views.APIView):
-    """ The view that adds product to requested customer's shopping cart """
+    """Add product item to requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CartProductAddSerializer(),
+        query_serializer=serializers.CartProductItemAddSerializer(),
         responses={'201': ItemSerializer(many=True)}
     )
     def post(self, request: HttpRequest) -> response.Response:
         item = services.AddItemToCart(request=request).execute()
-        return response.Response(data=item.data, status=status.HTTP_201_CREATED)
+        return response.Response(data=item, status=status.HTTP_201_CREATED)
 
 
-class RemoveProductFromCart(views.APIView):
-    """ The view that remove product from requested customer's shopping cart """
+class ReduceQuantityOfProductItem(views.APIView):
+    """Reduce quantity of product item requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CartProductRemoveSerializer(),
+        query_serializer=serializers.CartProductItemReduceSerializer(),
         responses={'201': ItemSerializer(many=True), '204': 'The product has just been deleted.'}
     )
     def delete(self, request: HttpRequest) -> response.Response:
-        item = services.RemoveItemFromCart(request=request).execute()
+        item = services.ReduceQuantityOfProductItem(request=request).execute()
         if item is not None:
-            return response.Response(data=item.data, status=status.HTTP_201_CREATED)
+            return response.Response(data=item, status=status.HTTP_201_CREATED)
+        return response.Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')
+
+
+class RemoveProductItemFromCart(views.APIView):
+    """Remove product from requesting user shopping cart."""
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @swagger_auto_schema(
+        query_serializer=serializers.CartProductItemRemoveSerializer(),
+        responses={'204': 'The product has just been deleted.'}
+    )
+    def delete(self, request: HttpRequest) -> response.Response:
+        services.RemoveProductItemFromCart(request=request).execute()
         return response.Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')

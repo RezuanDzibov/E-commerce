@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
-from src.item.models import Item
 
+from src.item.models import Item
 from .models import Cart
 
 
 class ItemInline(GenericTabularInline):
-    """ Generic tabular inline for Item """
+    """Generic tabular inline for Item model."""
     model = Item
     fields = ("product", "quantity", "product_price", "total_price")
     readonly_fields = ("product", "product_price", "total_price")

@@ -10,7 +10,7 @@ from . import serializers
 
 
 class CategoryViewSet(SerializerByActionMixin, viewsets.ModelViewSet):
-    """ Category ViewSet """
+    """ Category ViewSet. """
     queryset = models.Category.objects.all()
     default_serializer_class = serializers.CategoryCreateUpdateSerializer
     serializer_classes = {
@@ -25,11 +25,11 @@ class CategoryViewSet(SerializerByActionMixin, viewsets.ModelViewSet):
 
 
 class ProductViewSet(SerializerByActionMixin, viewsets.ModelViewSet):
-    """ Product ViewSet """
+    """ Product ViewSet. """
     queryset = models.Product.objects.all()
     default_serializer_class = serializers.ProductCreateUpdateSerializer
     serializer_classes = {
-        # "list": serializers.ProductListSerializer,
+        "list": serializers.ProductListSerializer,
         "retrieve": serializers.ProductRetrieveSerializer
     }
     lookup_field = "slug"
@@ -45,7 +45,7 @@ class ImageViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    """ Image ViewSet """
+    """ Image ViewSet. """
     queryset = models.Image.objects.all()
     serializer_class = serializers.ImageSerializer
     permission_classes = (IsStaffOrReadOnly,)
