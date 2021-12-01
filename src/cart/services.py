@@ -1,5 +1,5 @@
-from typing import Type, Optional
 from collections import OrderedDict
+from typing import Type, Optional
 
 from django.http import HttpRequest
 from rest_framework import exceptions
@@ -9,12 +9,12 @@ from src.cart.serializers import (
     CartProductItemRemoveSerializer,
     CartProductItemReduceSerializer
 )
+from src.core.exceptions import exception_raiser
+from src.core.serialize_utils import get_serializer_by_objects, get_serializer_by_data, get_validated_serializer
+from src.core.services import AbstractService
 from src.item.models import Item
 from src.item.serializers import ItemSerializer
 from src.product.models import Product
-from src.core.serialize_utils import get_serializer_by_objects, get_serializer_by_data, get_validated_serializer
-from src.core.exceptions import exception_raiser
-from src.core.services import AbstractService
 
 
 def get_cart_product_items(request: HttpRequest) -> Type[OrderedDict]:

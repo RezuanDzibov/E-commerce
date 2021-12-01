@@ -6,6 +6,14 @@ from django.template.loader import render_to_string
 
 
 def send_delivery_status_by_mail(subject: str, order_id: int, delivery_status: str, receiver_email: str) -> None:
+    """
+
+    @param subject: User first and last name.
+    @param order_id: Order id.
+    @param delivery_status: Order delivery_status.
+    @param receiver_email: User email.
+    @return: None.
+    """
     send_mail(
         f"Hello {subject}!",
         f"""
@@ -25,6 +33,15 @@ def send_notify_about_order(
         product_items_info: list,
         receiver_email: str
 ) -> None:
+    """
+
+    @param subject: User first and last name.
+    @param order_id: Order id.
+    @param order_total_price: Order delivery status.
+    @param product_items_info: Product items info.
+    @param receiver_email: User email.
+    @return: None.
+    """
     message = render_to_string("mail/order_info_message.html",
         {
             "order_id": order_id,

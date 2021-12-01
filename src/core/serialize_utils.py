@@ -9,7 +9,6 @@ def get_serializer_by_objects(
     many_objects: bool = False
 ) -> Type[Serializer]:
     """
-
     @param serializer_class: Any serializer class.
     @param objects: Any model instance or queryset of instances.
     @param many_objects: Serializer flag many. By, default False.
@@ -21,7 +20,6 @@ def get_serializer_by_objects(
 
 def get_serializer_by_data(serializer_class: Type[Serializer], data, many_objects: bool = False) -> Type[Serializer]:
     """
-
     @param serializer_class: Any serializer class.
     @param data: Data for serializing.
     @param many_objects: Serializer flag many. By, default False.
@@ -33,7 +31,6 @@ def get_serializer_by_data(serializer_class: Type[Serializer], data, many_object
 
 def get_validated_serializer(serializer: Type[Serializer], raise_exception: bool = True) -> Type[Serializer]:
     """
-
     @param serializer: Any serializer class.
     @param raise_exception: The method flag is valid. By, default True.
     @return: Any serializer class.
