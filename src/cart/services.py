@@ -20,7 +20,7 @@ from src.product.models import Product
 def get_cart_product_items(request: HttpRequest) -> Type[OrderedDict]:
     """
     Return product items' data from the cart of the requesting user.
-    @param request: An authenticated instance of HttpRequest.
+    @param request: Authenticated HttpRequest.
     @return: ItemSerializer's data.
     """
     product_items = request.user.cart.items.all()
@@ -31,7 +31,7 @@ def get_cart_product_items(request: HttpRequest) -> Type[OrderedDict]:
 def clear_cart(request: HttpRequest) -> None:
     """
     Clear all product items from the cart of the requesting user.
-    @param request: An authenticated instance of HttpRequest.
+    @param request: Authenticated HttpRequest.
     @return: None
     """
     request.user.cart.items.all().delete()
@@ -157,7 +157,6 @@ class ReduceQuantityOfProductItem(AbstractService):
 
     def _delete_product_item(self, product_item: Item):
         """
-        Delete Item model instance.
         @param product_item: Item model instance.
         @return: None
         """

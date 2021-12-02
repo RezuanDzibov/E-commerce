@@ -33,14 +33,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["products"] = representation.pop("items")
+        representation["product_items"] = representation.pop("items")
         return representation
 
 
-class PayOrderSerializer(serializers.Serializer):
-    order_id = serializers.IntegerField(min_value=1)
-
-
 class OrderStatusUpdateSerializer(serializers.Serializer):
-    order_id = serializers.IntegerField(min_value=1)
     delivery_status = serializers.ChoiceField(choices=Order.delivery_statuses)

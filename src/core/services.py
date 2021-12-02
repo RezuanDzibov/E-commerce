@@ -6,7 +6,7 @@ from django.http import HttpRequest
 class AbstractService(ABC):
     def __init__(self, request: HttpRequest):
         """
-        @param request: An authenticated instance of HttpRequest.
+        @param request: Authenticated HttpRequest.
         """
         self.request = request
 

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Type
 
 from django.db.models.query import QuerySet
@@ -6,93 +7,181 @@ from rest_framework import exceptions
 from rest_framework.serializers import Serializer
 
 from src.cart.models import Item
-from src.core.serialize_utils import get_serializer_by_data, get_serializer_by_objects, get_validated_serializer
 from src.core.exceptions import exception_raiser
+from src.core.serialize_utils import (
+    get_serializer_by_data,
+    get_serializer_by_objects,
+    get_validated_serializer,
+    get_serializer_data
+)
 from src.core.services import AbstractService
-
 from .models import Order
-from .serializers import (CreateOrderSerializer, OrderSerializer,
-                          PayOrderSerializer, OrderStatusUpdateSerializer)
+from .serializers import (
+    CreateOrderSerializer,
+    OrderSerializer,
+    OrderStatusUpdateSerializer
+)
 from .tasks import send_notify
 
 
-def get_orders(request: HttpRequest) -> Type[Serializer]:
-    orders = Order.objects.filter(customer=request.user)
-    orders_serializer = get_serializer_by_objects(serializer_class=OrderSerializer, objects=orders, many_objects=True)
-    return orders_serializer
+def order_id_is_valid(order_id: int) -> bool:
+    """
+    @param order_id: Order model instance id.
+    @return: True if valid, if not False.
+    @raise: If order_id less than id.
+    """
+    if order_id < 0:
+        raise exception_raiser(exceptions.ValidationError, msg=f"{order_id} less than 0.")
+    return True
+
+
+def get_order(request: HttpRequest, order_id: int) -> Order:
+    """
+    @param request: Authenticated HttpRequest instance.
+    @param order_id: Order model instance id.
+    @return: Order instance.
+    @raise: If Order model instance doesn't exist.
+    """
+    try:
+        order = Order.objects.get(customer=request.user, id=order_id)
+        return order
+    except Order.DoesNotExist:
+        exception_raiser(exceptions.NotFound, msg=f"You don't have such an order with the order_id {order_id}.")
+
+
+def get_orders(request: HttpRequest) -> Type[OrderedDict]:
+    """
+    Return requesting user orders.
+    @param request: Authenticated HttpRequest.
+    @return: OrderSerializer data.
+    """
+    orders = Order.objects.filter(customer=request.user).order_by("-created")
+    orders = get_serializer_by_objects(
+        serializer_class=OrderSerializer,
+        objects=orders,
+        many_objects=True
+    )
+    orders = get_serializer_data(orders)
+    return orders
+
+
+class GetOrder(AbstractService):
+    """Return order if it exists and has relative to request customer user."""
+    def execute(self, order_id: int):
+        """
+        Performer method.
+        @param order_id: Order model instance id.
+        @return:
+        """
+        order_id_is_valid(order_id=order_id)
+        order = get_serializer_data(
+            get_serializer_by_objects(
+                serializer_class=OrderSerializer,
+                objects=get_order(request=self.request, order_id=order_id)
+            )
+        )
+        return order
 
 
 class CreateOrder(AbstractService):
-    """ The class creating order  """
-
+    """Create order."""
     def __init__(self, request: HttpRequest):
-        self.request = request
+        super().__init__(request=request)
         self.data = self.request.data.copy()
 
     def execute(self) -> Type[Serializer]:
-        """ Class executor method """
+        """Performer method."""
         product_item_id_list_from_request = [x.strip() for x in self.data.pop("product_item_id_list")[0].split(",")]
-        item_id_list = self.get_valid_id_list(product_item_id_list_from_request)
-        items = self.get_product_items(item_id_list)
-        order = self.create_order()
-        self.add_item_to_order(order, items)
-        self.send_notify_about_order(order)
+        product_item_id_list = self._get_valid_id_list(product_item_id_list_from_request)
+        product_items = self._get_product_items(product_item_id_list)
+        order = self._create_order()
+        self._add_product_item_to_order(order, product_items)
+        self._notify_about_created_order(order)
         return get_serializer_by_objects(serializer_class=OrderSerializer, objects=order)
 
-    def is_id_list_valid(self, invalid_id_list: list) -> bool:
+    def _id_list_is_valid(self, invalid_id_list: list) -> bool:
+        """
+        @param invalid_id_list: list of invalid id.
+        @return: True if len of invalid_id_list if 0 or False.
+        """
         if len(invalid_id_list) > 0:
             return False
         else:
             return True
 
-    def validate_product_item_id(self, item_id: int, valid_id_list: list, invalid_id_list: list) -> None:
+    def _validate_product_item_id(self, product_item_id: int, valid_id_list: list, invalid_id_list: list) -> None:
+        """
+        @param product_item_id: Item model instance id.
+        @param valid_id_list: list of valid id.
+        @param invalid_id_list: list of invalid id.
+        """
         try:
-            item_id = int(item_id)
-            if item_id > 0:
-                valid_id_list.append(item_id)
+            product_item_id = int(product_item_id)
+            if product_item_id > 0:
+                valid_id_list.append(product_item_id)
             else:
-                invalid_id_list.append(item_id)
+                invalid_id_list.append(product_item_id)
         except ValueError:
-            invalid_id_list.append(item_id)
+            invalid_id_list.append(product_item_id)
 
-    def get_valid_id_list(self, id_list_from_request: list) -> list:
+    def _get_valid_id_list(self, id_list_from_request: list) -> list:
+        """
+        @param id_list_from_request:
+        @return: list of valid product item id.
+        @raise: If passed any invalid product item id.
+        """
         invalid_id_list = []
         valid_id_list = []
-        for item_id in id_list_from_request:
-            self.validate_product_item_id(item_id, valid_id_list, invalid_id_list)
-        if not self.is_id_list_valid(invalid_id_list):
+        for product_item_id in id_list_from_request:
+            self._validate_product_item_id(product_item_id, valid_id_list, invalid_id_list)
+        if not self._id_list_is_valid(invalid_id_list):
             exception_raiser(
                 exception_class=exceptions.ValidationError,
                 msg=f"You have provided invalid data for the ids field.{invalid_id_list}"
             )
         return valid_id_list
 
-    def get_product_items(self, item_id_list: list) -> QuerySet:
-        items = Item.objects.filter(id__in=item_id_list, cart=self.request.user.cart)
+    def _get_product_items(self, product_item_id_list: list) -> QuerySet:
+        """
+        @param product_item_id_list:
+        @return: Queryset of Item instance or instances.
+        @raise: If don't exist any instances.
+        """
+        items = Item.objects.filter(id__in=product_item_id_list, cart=self.request.user.cart)
         if items.exists():
             return items
         exception_raiser(exception_class=exceptions.NotFound, msg="You don't have so items in your cart")
 
-    def create_order(self) -> Order:
-        order_serializer = get_validated_serializer(get_serializer_by_data(serializer_class=CreateOrderSerializer, data=self.data))
+    def _create_order(self) -> Order:
+        """
+        @return: Order model instance.
+        """
+        order_serializer = get_validated_serializer(
+            get_serializer_by_data(
+                serializer_class=CreateOrderSerializer,
+                data=self.data
+            )
+        )
         order = Order.objects.create(
             customer=self.request.user,
             **order_serializer.validated_data,
         )
         return order
 
-    def add_item_to_order(self, order: Order, items: Item) -> QuerySet:
+    def _add_product_item_to_order(self, order: Order, product_items: Item) -> QuerySet:
         """
-
-        @param order:
-        @param items:
-        @return:
+        @param order: Order model instance.
+        @param product_items: Queryset of Item instance or instances.
+        @return: Queryset of Item instance or instances.
         """
-        for item in items:
+        for item in product_items:
             item.content_object = order
             item.save()
 
-    def send_notify_about_order(self, order: Order) -> None:
+    def _notify_about_created_order(self, order: Order) -> None:
+        """
+        @param order: Order model instance.
+        """
         product_items = order.items.values("product__name", "product__price", "quantity")
         product_items_info = []
         for product_item in product_items:
@@ -112,65 +201,80 @@ class CreateOrder(AbstractService):
 
 
 class PayOrder(AbstractService):
-    """ The class sets paid is true """
+    """Set paid is true."""
+    def execute(self, order_id: int) -> Type[OrderedDict]:
+        """
+        Performer method.
+        @param order_id: Order model instance id.
+        @return: Serializer data.
+        """
+        order_id_is_valid(order_id=order_id)
+        order = self._get_order(order_id=order_id)
+        self._set_paid_is_true(order)
+        order = get_serializer_data(get_serializer_by_objects(serializer_class=OrderSerializer, objects=order))
+        return order
 
-    def __init__(self, request: HttpRequest):
-        self.request = request
+    def _get_order(self, order_id: int) -> Order:
+        """
+        Return order if it exists and is paid True.
+        @param order_id: Order model instance id.
+        @return: Order model instance.
+        @raise: If Order model instance paid flag is False.
+        """
+        order = get_order(self.request, order_id=order_id)
+        if order.paid is True:
+            return order
+        exception_raiser(
+            exception_class=exceptions.NotFound,
+            msg=f"You don't have such an order with the order_id {order_id}."
+        )
 
-    def execute(self) -> Type[Serializer]:
-        pay_order_serializer = get_validated_serializer(
-            get_serializer_by_data(serializer_class=PayOrderSerializer, data=self.request.data))
-        paid_order = self.set_paid_is_true(pay_order_serializer)
-        return paid_order
-
-    def set_paid_is_true(self, pay_order_serializer: Type[Serializer]) -> Type[Serializer]:
-        try:
-            order = Order.objects.get(
-                customer=self.request.user,
-                id=pay_order_serializer.data.get("order_id"),
-                paid=False
-            )
-            order.paid = True
-            order.save()
-            order_serializer = get_serializer_by_objects(serializer_class=OrderSerializer, objects=order)
-            return order_serializer
-        except Order.DoesNotExist:
-            exception_raiser(
-                exception_class=exceptions.NotFound,
-                msg=f"""You don't have such an order with the order_id {pay_order_serializer.data.get("order_id")}."""
-            )
+    def _set_paid_is_true(self, order) -> None:
+        """
+        @param order: Order model instance.
+        """
+        order.paid = True
+        order.save()
 
 
 class UpdateOrderStatus(AbstractService):
-    """ The class updating order's delivery status """
+    """Update order delivery status."""
+    def execute(self, order_id: int) -> Type[OrderedDict]:
+        """
+        Performer method.
+        @param order_id: Order model  instance id.
+        @return: Serializer data.
+        """
+        delivery_status = self._get_order_serializer().data.get("delivery_status")
+        order = self._get_order(order_id)
+        self._update_order_status(order, delivery_status)
+        order = get_serializer_data(get_serializer_by_objects(serializer_class=OrderSerializer, objects=order))
+        return order
 
-    def __init__(self, request: HttpRequest):
-        self.request = request
-
-    def execute(self) -> Type[Serializer]:
-        order_id, delivery_status = list(map(self.get_order_serializer().data.get, ("order_id", "delivery_status")))
-        order = self.get_order(order_id)
-        self.update_order_status(order, delivery_status)
-        return get_serializer_by_objects(serializer_class=OrderSerializer, objects=order)
-
-    def get_order_serializer(self) -> Type[Serializer]:
+    def _get_order_serializer(self) -> Type[Serializer]:
+        """
+        @return: Validated OrderStatusUpdateSerializer.
+        """
         return get_validated_serializer(
             get_serializer_by_data(serializer_class=OrderStatusUpdateSerializer, data=self.request.data)
         )
 
-    def get_order(self, order_id: int) -> Order:
-        try:
-            order = Order.objects.get(id=order_id)
-            if order.paid == False:
-                exception_raiser(exception_class=exceptions.ValidationError,
-                                 msg=f"The order with id {order_id} hasn't paid")
-            return order
-        except Order.DoesNotExist:
-            exception_raiser(
-                exception_class=exceptions.NotFound,
-                msg=f"""You don't have such an order with the order_id {order_id}."""
-            )
+    def _get_order(self, order_id: int) -> Order:
+        """
+        @param order_id: Order model instance id.
+        @return: Order instance if it exists and paid is True.
+        @raise: If Order model instance paid flag is False.
+        """
+        order = get_order(request=self.request, order_id=order_id)
+        if not order.paid:
+            exception_raiser(exception_class=exceptions.ValidationError,
+                             msg=f"The order with id {order_id} hasn't paid")
+        return order
 
-    def update_order_status(self, order: Order, delivery_status: str) -> None:
+    def _update_order_status(self, order: Order, delivery_status: str) -> None:
+        """
+        @param order: Order model instance.
+        @param delivery_status: Order instance delivery status.
+        """
         order.delivery_status = delivery_status
         order.save()

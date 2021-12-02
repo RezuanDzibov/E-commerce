@@ -3,6 +3,7 @@ from typing import Type, Optional
 
 def exception_raiser(exception_class: Type[Exception], msg: Optional[str] = None) -> None:
     """
+    @rtype: object
     @param exception_class: Any exception class
     @param msg: Exception message. Optional. By default False.
     @return: None

@@ -6,7 +6,6 @@ from . import models
 
 
 class CustomerAdmin(UserAdmin):
-    """ Customer admin """
     add_form = CustomerCreationForm
     form = CustomerChangeForm
     model = models.Customer

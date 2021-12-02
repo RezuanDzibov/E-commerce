@@ -11,7 +11,6 @@ Customer = get_user_model()
 
 
 class Order(models.Model):
-    """ Order model  """
     delivery_statuses = (
         ("unpaid", "Unpaid"),
         ("processing", "Processing"),
@@ -46,7 +45,7 @@ class Order(models.Model):
 
     @property
     def order_total_price(self):
-        """ Order total price """
+        """Instance total price."""
         total_price = 0
         items = self.items.values("product__price", "quantity")
         for item in items:

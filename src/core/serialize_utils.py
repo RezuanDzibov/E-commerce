@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Type
 
 from rest_framework.serializers import Serializer
@@ -37,3 +38,11 @@ def get_validated_serializer(serializer: Type[Serializer], raise_exception: bool
     """
     if serializer.is_valid(raise_exception=raise_exception):
         return serializer
+
+
+def get_serializer_data(serializer: Type[Serializer]) -> Type[OrderedDict]:
+    """
+    @param serializer: Any Serializer subclass.
+    @return: Serializer data property.
+    """
+    return serializer.data
