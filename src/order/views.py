@@ -1,12 +1,13 @@
 from django.http import HttpRequest
-from rest_framework import permissions, response, status, views
+from rest_framework import permissions, response, status, views, generics
 from drf_yasg.utils import swagger_auto_schema
 
 from . import services
 from . import serializers
 
 
-class GetOrders(views.APIView):
+class OrderList(generics.GenericAPIView):
+    """Requesting user orders."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
@@ -17,7 +18,7 @@ class GetOrders(views.APIView):
         return response.Response(data=orders, status=status.HTTP_200_OK)
 
 
-class GetOrder(views.APIView):
+class OrderRetrieve(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(responses={"200": serializers.OrderSerializer()})
@@ -26,7 +27,7 @@ class GetOrder(views.APIView):
         return response.Response(data=order, status=status.HTTP_200_OK)
 
 
-class CreateOrder(views.APIView):
+class OrderCreate(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
@@ -38,7 +39,8 @@ class CreateOrder(views.APIView):
         return response.Response(data=order.data, status=status.HTTP_201_CREATED)
 
 
-class PayOrder(views.APIView):
+class OrderPay(views.APIView):
+    """Set order paid flag is True."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
@@ -49,7 +51,8 @@ class PayOrder(views.APIView):
         return response.Response(data=order, status=status.HTTP_201_CREATED)
 
 
-class UpdateOrderStatus(views.APIView):
+class OrderStatusUpdate(views.APIView):
+    """Update order instance."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(

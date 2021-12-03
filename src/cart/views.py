@@ -3,11 +3,11 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, response, status, views
 
 from src.item.serializers import ItemSerializer
-from . import serializers
+from .serializers import CartProductItem
 from . import services
 
 
-class CartProductItems(views.APIView):
+class ProductItems(views.APIView):
     """All product items in requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -17,52 +17,58 @@ class CartProductItems(views.APIView):
         return response.Response(data={"product items": items}, status=status.HTTP_200_OK)
 
 
-class ClearAllProductItemsFromCart(views.APIView):
+class ClearCart(views.APIView):
     """Clear all products from requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
-    @swagger_auto_schema(responses={'204': 'Your cart been cleared.'})
+    @swagger_auto_schema(responses={'204': "Your cart has been cleared."})
     def delete(self, request: HttpRequest) -> response.Response:
         services.clear_cart(request=request)
         return response.Response(data={"detail": "Your cart been cleared."}, status=status.HTTP_204_NO_CONTENT)
 
 
-class AddProductToCart(views.APIView):
+class ProductItemAddToCart(views.APIView):
     """Add product item to requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CartProductItemAddSerializer(),
+        query_serializer=CartProductItem(),
         responses={'201': ItemSerializer(many=True)}
     )
-    def post(self, request: HttpRequest) -> response.Response:
-        item = services.AddItemToCart(request=request).execute()
+    def post(self, request: HttpRequest, product_slug: str) -> response.Response:
+        item = services.AddItemToCart(request=request).execute(product_slug=product_slug)
         return response.Response(data=item, status=status.HTTP_201_CREATED)
 
 
-class ReduceQuantityOfProductItem(views.APIView):
+class ProductItemReduceQuantity(views.APIView):
     """Reduce quantity of product item requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CartProductItemReduceSerializer(),
+        query_serializer=CartProductItem(),
         responses={'201': ItemSerializer(many=True), '204': 'The product has just been deleted.'}
     )
-    def delete(self, request: HttpRequest) -> response.Response:
-        item = services.ReduceQuantityOfProductItem(request=request).execute()
+    def patch(self, request: HttpRequest, product_slug: str) -> response.Response:
+        item = services.ReduceQuantityOfProductItem(request=request).execute(product_slug)
         if item is not None:
             return response.Response(data=item, status=status.HTTP_201_CREATED)
-        return response.Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')
+        return response.Response(
+            status=status.HTTP_204_NO_CONTENT,
+            data={"detail": f"The product item with slug {product_slug} has just been deleted."}
+        )
 
 
-class RemoveProductItemFromCart(views.APIView):
+class ProductItemRemoveFromCart(views.APIView):
     """Remove product from requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CartProductItemRemoveSerializer(),
-        responses={'204': 'The product has just been deleted.'}
+        query_serializer=CartProductItem(),
+        responses={'204': "The product item with slug product_slug parameter has just been deleted."}
     )
-    def delete(self, request: HttpRequest) -> response.Response:
-        services.RemoveProductItemFromCart(request=request).execute()
-        return response.Response(status=status.HTTP_204_NO_CONTENT, data='The product has just been deleted.')
+    def delete(self, request: HttpRequest, product_slug: str) -> response.Response:
+        services.RemoveProductItemFromCart(request=request).execute(product_slug=product_slug)
+        return response.Response(
+            status=status.HTTP_204_NO_CONTENT,
+            data={"detail": f"The product item with slug {product_slug} has just been deleted."}
+        )

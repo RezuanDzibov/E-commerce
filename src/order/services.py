@@ -14,7 +14,7 @@ from src.core.serialize_utils import (
     get_validated_serializer,
     get_serializer_data
 )
-from src.core.services import AbstractService
+from src.core.services import BaseService
 from .models import Order
 from .serializers import (
     CreateOrderSerializer,
@@ -39,7 +39,7 @@ def get_order(request: HttpRequest, order_id: int) -> Order:
     """
     @param request: Authenticated HttpRequest instance.
     @param order_id: Order model instance id.
-    @return: Order instance.
+    @return: Order model instance.
     @raise: If Order model instance doesn't exist.
     """
     try:
@@ -53,7 +53,7 @@ def get_orders(request: HttpRequest) -> Type[OrderedDict]:
     """
     Return requesting user orders.
     @param request: Authenticated HttpRequest.
-    @return: OrderSerializer data.
+    @return: Serializer data.
     """
     orders = Order.objects.filter(customer=request.user).order_by("-created")
     orders = get_serializer_by_objects(
@@ -65,7 +65,7 @@ def get_orders(request: HttpRequest) -> Type[OrderedDict]:
     return orders
 
 
-class GetOrder(AbstractService):
+class GetOrder(BaseService):
     """Return order if it exists and has relative to request customer user."""
     def execute(self, order_id: int):
         """
@@ -83,7 +83,7 @@ class GetOrder(AbstractService):
         return order
 
 
-class CreateOrder(AbstractService):
+class CreateOrder(BaseService):
     """Create order."""
     def __init__(self, request: HttpRequest):
         super().__init__(request=request)
@@ -200,7 +200,7 @@ class CreateOrder(AbstractService):
         )
 
 
-class PayOrder(AbstractService):
+class PayOrder(BaseService):
     """Set paid is true."""
     def execute(self, order_id: int) -> Type[OrderedDict]:
         """
@@ -237,7 +237,7 @@ class PayOrder(AbstractService):
         order.save()
 
 
-class UpdateOrderStatus(AbstractService):
+class UpdateOrderStatus(BaseService):
     """Update order delivery status."""
     def execute(self, order_id: int) -> Type[OrderedDict]:
         """

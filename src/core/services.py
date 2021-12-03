@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from django.http import HttpRequest
 
 
-class AbstractService(ABC):
+class BaseService(ABC):
     def __init__(self, request: HttpRequest):
         """
         @param request: Authenticated HttpRequest.
