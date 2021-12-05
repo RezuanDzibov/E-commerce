@@ -17,9 +17,9 @@ from src.core.serialize_utils import (
 from src.core.services import BaseService
 from .models import Order
 from .serializers import (
-    CreateOrderSerializer,
     OrderSerializer,
-    OrderStatusUpdateSerializer
+    OrderStatusUpdateSerializer,
+    OrderCreateSerializer
 )
 from .tasks import send_notify
 
@@ -91,10 +91,24 @@ class CreateOrder(BaseService):
 
     def execute(self) -> Type[Serializer]:
         """Performer method."""
-        product_item_id_list_from_request = [x.strip() for x in self.data.pop("product_item_id_list")[0].split(",")]
+        try:
+            product_item_id_list_from_request = self._get_product_id_list(self.data.pop("product_item_id_list")[0])
+        except KeyError:
+            exception_raiser(
+                exception_class=exceptions.ValidationError,
+                msg="You must provide product_item_id_list like follow [12,43...] or 12,43..."
+            )
         product_item_id_list = self._get_valid_id_list(product_item_id_list_from_request)
+        order_serializer = get_serializer_data(
+            get_validated_serializer(
+                get_serializer_by_data(
+                    serializer_class=OrderCreateSerializer,
+                    data=self.data
+                )
+            )
+        )
         product_items = self._get_product_items(product_item_id_list)
-        order = self._create_order()
+        order = self._create_order(order_serializer=order_serializer)
         self._add_product_item_to_order(order, product_items)
         self._notify_about_created_order(order)
         return get_serializer_by_objects(serializer_class=OrderSerializer, objects=order)
@@ -152,23 +166,17 @@ class CreateOrder(BaseService):
             return items
         exception_raiser(exception_class=exceptions.NotFound, msg="You don't have so items in your cart")
 
-    def _create_order(self) -> Order:
+    def _create_order(self, order_serializer) -> Order:
         """
         @return: Order model instance.
         """
-        order_serializer = get_validated_serializer(
-            get_serializer_by_data(
-                serializer_class=CreateOrderSerializer,
-                data=self.data
-            )
-        )
         order = Order.objects.create(
             customer=self.request.user,
-            **order_serializer.validated_data,
+            **order_serializer,
         )
         return order
 
-    def _add_product_item_to_order(self, order: Order, product_items: Item) -> QuerySet:
+    def _add_product_item_to_order(self, order: Order, product_items: QuerySet) -> None:
         """
         @param order: Order model instance.
         @param product_items: Queryset of Item instance or instances.
@@ -199,6 +207,16 @@ class CreateOrder(BaseService):
             receiver_email=order.customer.email
         )
 
+    def _get_product_id_list(self, string: str) -> list:
+        """
+        @param string: product_item_id_list from request.
+        @return: List of product_item_id.
+        """
+        brackets = ["[", "]"]
+        for bracket in brackets:
+            string = string.replace(bracket, "")
+        return list([x.strip() for x in string.split(",")])
+
 
 class PayOrder(BaseService):
     """Set paid is true."""
@@ -223,11 +241,11 @@ class PayOrder(BaseService):
         """
         order = get_order(self.request, order_id=order_id)
         if order.paid is True:
-            return order
-        exception_raiser(
-            exception_class=exceptions.NotFound,
-            msg=f"You don't have such an order with the order_id {order_id}."
-        )
+            exception_raiser(
+                exception_class=exceptions.ValidationError,
+                msg=f"The order with id {order_id} is paid"
+            )
+        return order
 
     def _set_paid_is_true(self, order) -> None:
         """
@@ -268,7 +286,7 @@ class UpdateOrderStatus(BaseService):
         order = get_order(request=self.request, order_id=order_id)
         if not order.paid:
             exception_raiser(exception_class=exceptions.ValidationError,
-                             msg=f"The order with id {order_id} hasn't paid")
+                             msg=f"The order with id {order_id} hasn't paid yet")
         return order
 
     def _update_order_status(self, order: Order, delivery_status: str) -> None:

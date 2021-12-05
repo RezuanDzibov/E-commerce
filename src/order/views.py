@@ -31,7 +31,7 @@ class OrderCreate(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
-        query_serializer=serializers.CreateOrderSerializer(),
+        query_serializer=serializers.OrderCreateDataInputSerializer(),
         responses={"201": serializers.OrderSerializer()},
     )
     def post(self, request: HttpRequest) -> response.Response:

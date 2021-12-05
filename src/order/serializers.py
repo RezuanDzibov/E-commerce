@@ -5,11 +5,19 @@ from src.item.serializers import ItemSerializer
 from .models import Order
 
 
-class CreateOrderSerializer(serializers.ModelSerializer):
+class OrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
         fields = ("first_name", "last_name", "phone", "address", "city", "postal_code")
+
+
+class OrderCreateDataInputSerializer(OrderCreateSerializer):
+    product_item_id_list = serializers.ListField(child=serializers.IntegerField(min_value=0))
+
+    class Meta:
+        model = Order
+        fields = OrderCreateSerializer.Meta.fields + ('product_item_id_list',)
 
 
 class OrderSerializer(serializers.ModelSerializer):
