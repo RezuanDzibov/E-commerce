@@ -85,6 +85,11 @@ class AddItemToCart(BaseService):
         """
         try:
             product = Product.objects.get(slug=product_slug)
+            if product.available is False:
+                exception_raiser(
+                    exception_class=exceptions.ValidationError,
+                    msg=f"Product with slug '{product_slug}' isn't available"
+                )
             return product
         except Product.DoesNotExist:
             return exception_raiser(

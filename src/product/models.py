@@ -5,12 +5,12 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 def get_upload_path(instance, filename):
-    """ Construct image path by product name and filename """
+    """Construct image path by product name and filename."""
     return f"product_images/{instance.product.name[:50]}/{filename}"
 
 
 class Category(MPTTModel):
-    """ Category model"""
+    """Category model."""
     name = models.CharField(max_length=300, verbose_name="Name")
     slug = models.SlugField(unique=True, blank=True, verbose_name="Slug")
     parent = TreeForeignKey(
@@ -30,7 +30,8 @@ class Category(MPTTModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if not self.slug or self.slug != slugify(self.name):
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -38,7 +39,7 @@ class Category(MPTTModel):
 
 
 class Product(models.Model):
-    """ Product model """
+    """Product model."""
     name = models.CharField(max_length=300, verbose_name="Name")
     slug = models.SlugField(unique=True, blank=True, help_text="You can leave it blank.", verbose_name="Slug")
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products", verbose_name="Category")
@@ -61,16 +62,16 @@ class Product(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug or self.slug != slugify(self.name):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("product-detail", kwargs={"slug": self.slug})
+        return reverse("product:product-detail", kwargs={"slug": self.slug})
 
 
 class Image(models.Model):
-    """ Image model """
+    """Image model."""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to=get_upload_path)
     alt_text = models.CharField(verbose_name="Alternative text", max_length=255, null=True)

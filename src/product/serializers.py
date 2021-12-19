@@ -6,11 +6,10 @@ from . import models
 class ProductListSerializer(serializers.ModelSerializer):
     """ Serializer for list of products """
     category = serializers.CharField(source="category.name")
-    url = serializers.HyperlinkedIdentityField(view_name="product:product-detail", lookup_field="slug", read_only=True)
 
     class Meta:
         model = models.Product
-        fields = ("name", "slug", "category", "price", "available", "url")
+        fields = ("name", "slug", "category", "price", "available")
 
 
 class ProductRetrieveSerializer(serializers.ModelSerializer):

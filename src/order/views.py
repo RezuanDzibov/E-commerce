@@ -36,7 +36,7 @@ class OrderCreate(views.APIView):
     )
     def post(self, request: HttpRequest) -> response.Response:
         order = services.CreateOrder(request).execute()
-        return response.Response(data=order.data, status=status.HTTP_201_CREATED)
+        return response.Response(data=order, status=status.HTTP_201_CREATED)
 
 
 class OrderPay(views.APIView):

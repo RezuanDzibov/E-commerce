@@ -7,7 +7,7 @@ from .serializers import CartProductItem
 from . import services
 
 
-class ProductItems(views.APIView):
+class ProductItemList(views.APIView):
     """All product items in requesting user shopping cart."""
     permission_classes = (permissions.IsAuthenticated,)
 

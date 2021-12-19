@@ -71,6 +71,7 @@ celery = "^5.2.0"
 redis = "^3.5.3"
 eventlet = "^0.32.0"
 flower = "^1.0.0"
+pytest-lazy-fixture = "^0.6.3"
 
 [tool.poetry.dev-dependencies]
 
