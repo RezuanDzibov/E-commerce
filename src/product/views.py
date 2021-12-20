@@ -3,10 +3,9 @@ from rest_framework import filters, mixins, pagination, viewsets
 
 from src.core.mixins import SerializerByActionMixin
 from src.core.permssions import IsStaffOrReadOnly
-
-from . import filters as app_filters
-from . import models
-from . import serializers
+from src.product import filters as app_filters
+from src.product import models
+from src.product import serializers
 
 
 class CategoryViewSet(SerializerByActionMixin, viewsets.ModelViewSet):

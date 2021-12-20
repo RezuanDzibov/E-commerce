@@ -1,8 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .tasks import send_delivery_status
-from .models import Order
+from src.order.tasks import send_delivery_status
+from src.order.models import Order
 
 
 @receiver(post_save, sender=Order)

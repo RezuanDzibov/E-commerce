@@ -2,8 +2,8 @@ from django.http import HttpRequest
 from rest_framework import permissions, response, status, views, generics
 from drf_yasg.utils import swagger_auto_schema
 
-from . import services
-from . import serializers
+from src.order import services
+from src.order import serializers
 
 
 class OrderList(generics.GenericAPIView):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
 
-from . import models
+from src.product import models
 
 
 @admin.register(models.Product)

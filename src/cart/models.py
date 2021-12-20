@@ -4,6 +4,7 @@ from django.db import models
 
 from src.item.models import Item
 
+
 Customer = get_user_model()
 
 

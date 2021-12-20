@@ -15,13 +15,13 @@ from src.core.serialize_utils import (
     get_serializer_data
 )
 from src.core.services import BaseService
-from .models import Order
-from .serializers import (
+from src.order.models import Order
+from src.order.serializers import (
     OrderSerializer,
     OrderStatusUpdateSerializer,
     OrderCreateSerializer
 )
-from .tasks import send_notify
+from src.order.tasks import send_notify
 
 
 def order_id_is_valid(order_id: int) -> bool:

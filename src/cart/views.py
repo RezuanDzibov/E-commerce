@@ -3,8 +3,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, response, status, views
 
 from src.item.serializers import ItemSerializer
-from .serializers import CartProductItem
-from . import services
+from src.cart.serializers import CartProductItem
+from src.cart import services
 
 
 class ProductItemList(views.APIView):

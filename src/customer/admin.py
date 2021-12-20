@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomerChangeForm, CustomerCreationForm
-from . import models
+from src.customer.forms import CustomerChangeForm, CustomerCreationForm
+from src.customer.models import Customer
 
 
 class CustomerAdmin(UserAdmin):
     add_form = CustomerCreationForm
     form = CustomerChangeForm
-    model = models.Customer
+    model = Customer
     list_display = ("first_name", "last_name", "email", "is_staff", "is_active")
     list_filter = ("first_name", "last_name", "email", "is_staff", "is_active")
     list_display_links = ("first_name", "last_name", "email")
@@ -30,4 +30,4 @@ class CustomerAdmin(UserAdmin):
     ordering = ("first_name", "last_name", "email")
 
 
-admin.site.register(models.Customer, CustomerAdmin)
+admin.site.register(Customer, CustomerAdmin)

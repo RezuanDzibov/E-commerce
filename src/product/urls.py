@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from src.product import views
 
 app_name = "product"
 
