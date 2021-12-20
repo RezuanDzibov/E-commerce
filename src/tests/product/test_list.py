@@ -68,7 +68,7 @@ def test_product_list(api_client, create_products):
         })
     ]
 )
-def test_product_list_by_filter(filter_name, filter_expressions_dict, api_client, create_products):
+def test_product_list_filter(filter_name, filter_expressions_dict, api_client, create_products):
     products = Product.objects.filter(filter_expressions_dict.get("queryset_filter_expression"))
     product_serializer = get_serializer_by_objects(
         serializer_class=ProductListSerializer,
@@ -81,7 +81,7 @@ def test_product_list_by_filter(filter_name, filter_expressions_dict, api_client
     assert json.loads(response.content).get("results") == expected_data
 
 
-def test_product_list_by_search_category(api_client, create_products):
+def test_product_list_search_category(api_client, create_products):
     products = Product.objects.all()
     category_name = products[0].category.name
     products = products.filter(category__name__icontains=category_name)
