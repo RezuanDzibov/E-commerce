@@ -1,0 +1,19 @@
+[
+{
+    "model": "customer.customer",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$Xo3HFo12SUKKdCawn3P96v$1WSJg/mmVjK1M+IxbW1d1enNxq9G9rMkVxA2qgP/kTY=",
+        "last_login": null,
+        "is_superuser": true,
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-12-21T16:52:11.528Z",
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "email": "admin@gmail.com",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]
