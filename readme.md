@@ -31,4 +31,33 @@ But their implementation does not claim to be "best practice".
 
 ![pycharm](https://img.shields.io/badge/PyCharm-green?style=for-the-badge&logo=pycharm)
 
-# To start this project you need.
+## Before you start this project, you should make sure that you have docker and docker-compose installed and fill out the .env file. Here are the fields you need to fill in: 
+
+```
+SECRET_KEY
+DEBUG
+DJANGO_ALLOWED_HOSTS
+SQL_ENGINE
+SQL_USER
+SQL_PASSWORD
+SQL_DATABASE
+SQL_HOST
+SQL_PORT
+DATABASE
+EMAIL_BACKEND
+EMAIL_HOST
+EMAIL_USE_TLS
+EMAIL_PORT
+EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD
+CELERY_BROKER
+CELERY_BACKEND
+```
+
+## And if so, you can clone the repository and run the project with the command:
+```
+docker-compose up
+```
+## And now the project should be up and running. If there will be errors connecting to the database (that the database on port 5432 is not found), this is how it works. 
+
+# Thank you for your attention.
