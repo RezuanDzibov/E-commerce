@@ -31,4 +31,10 @@ But their implementation does not claim to be "best practice".
 
 ![pycharm](https://img.shields.io/badge/PyCharm-green?style=for-the-badge&logo=pycharm)
 
-# To start this project you need.
+## Before you take any steps to start this project you need to make sure that you have docker and docker-compose installed.And if so, you can clone the repository and run the project with the command:
+```
+docker-compose up
+```
+## And now the project should be up and running. If there will be errors connecting to the database (that the database on port 5432 is not found), this is how it works. 
+
+# Thank you for your attention.
