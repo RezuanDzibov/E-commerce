@@ -2,7 +2,9 @@
 
 ## Some words about this project.
 
-This project is being developed by me as an educational one. And there may be something not implemented at the proper level or should be done in a way (approach). Thank you for your attention.
+This project is a kind of summation of my knowledge that I have acquired. 
+And I tried to implement this knowledge in this project. 
+But their implementation does not claim to be "best practice".
 
 # Technologies used
 
@@ -12,6 +14,7 @@ This project is being developed by me as an educational one. And there may be so
 ![django](https://img.shields.io/badge/Django-00a328?style=for-the-badge&logo=django)
 ![django-rest-framework](https://img.shields.io/badge/DRF-c70d00?style=for-the-badge&logo=django)
 ![celery](https://img.shields.io/badge/Celery-a6ff00c70d00?style=for-the-badge&logo=celery) 
+![redis](https://img.shields.io/badge/Reids-FFFFFF?style=for-the-badge&logo=redis)
 
 ## Database
 
@@ -20,6 +23,7 @@ This project is being developed by me as an educational one. And there may be so
 ## Tools
 
 ![docker](https://img.shields.io/badge/Docker-160d91?style=for-the-badge&logo=Docker)
+![docker-compose](https://img.shields.io/badge/Docker_compose-160d91?style=for-the-badge&logo=docker)
 ![postman](https://img.shields.io/badge/Postman-dba240?style=for-the-badge&logo=postman)
 
 ![git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
@@ -27,34 +31,4 @@ This project is being developed by me as an educational one. And there may be so
 
 ![pycharm](https://img.shields.io/badge/PyCharm-green?style=for-the-badge&logo=pycharm)
 
-## The essence of the project and what it is.
-
-### Some features that can be highlighted.
-### (Django apps in src dir.)
-+ Customer
-  + Customer user model which based by AbstractUser.
-  + It has CustomerManager which base by BaseUser Manager
-  + Username field replaced by email field. It's login for a customer.
-  + When a new customer is created, a shopping cart is created for him. And when you delete a customer, his cart is deleted. This is all implemented using django signals.
-+ Item
-  + When an item is created, it is associated with the requester cart using a generic foreignkey relationship.
-  + When the order is placed. This item is associated with the created order through the field that was associated with the cart.
-+ Order
-  + When an order is created, it is linked through a foreign key to the customer creating the order.
-+ Product
-  + The category model was created using the django-mptt library.
-  + It is possible to add an unlimited number of images for products. This is implemented using a foreign key relationship from the Image model to the Product model.
-
-# A few of my explanatory words about this project. 
-
-## This project is being developed (developed) in Python version 3 on the framework django and django-rest-freamework and related technologies (django-mppt, django-filter, djoser and etc).
-
-## Development process
-
-### In this project, I tried to stick to the MVC style. And where more than CRUD is needed, I added a services layer in which I implemented all the processing of input data and the issuance of serialized objects.
-
-___
-
-### I hope it doesn't work out. 
-
-![mem](https://c.tenor.com/BvNT-VXurjEAAAAd/meme-what-the-hell-is-this.gif)
+# To start this project you need.
