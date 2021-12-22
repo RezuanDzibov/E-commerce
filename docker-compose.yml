@@ -1,42 +1,44 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
     build: .
     volumes:
-      - static_volume:/home/app/web/static
+      - static_volume:/home/app/web/static_files
       - media_volume:/home/app/web/media
-    expose:
-      - 8000
     depends_on:
       - db
-    env_file:
-      ./.env
+    env_file: ./.env
+    command: "python manage.py runserver 0.0.0.0:8000"
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+  celery:
+    build: .
+    command: celery -A config worker -l info -P eventlet
+    depends_on:
+      - redis
+      - web
+  flower:
+    build: .
+    command: celery -A config flower --address=0.0.0.0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - web
+      - celery
   db:
-    image: postgres:13.0
+    image: postgres:14.0
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      ./.env.prod.db
+    environment:
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DATABASE}
   redis:
-    image: "redis"
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    depends_on:
-      - web
-  nginx:
-    build: ./nginx
-    ports:
-      - "80:80"
-    volumes:
-      - static_volume:/home/app/web/static
-      - media_volume:/home/app/web/media
-    depends_on:
-      - web
+    image: 'redis:alpine'
 volumes:
   postgres_data:
   static_volume:
   media_volume:
-  redis_data:
