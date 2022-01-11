@@ -14,11 +14,11 @@ But their implementation does not claim to be "best practice".
 ![django](https://img.shields.io/badge/Django-00a328?style=for-the-badge&logo=django)
 ![django-rest-framework](https://img.shields.io/badge/DRF-c70d00?style=for-the-badge&logo=django)
 ![celery](https://img.shields.io/badge/Celery-a6ff00c70d00?style=for-the-badge&logo=celery) 
-![redis](https://img.shields.io/badge/Reids-FFFFFF?style=for-the-badge&logo=redis)
 
 ## Database
 
 ![postgres](https://img.shields.io/badge/Postgres-282438?style=for-the-badge&logo=postgresql)
+![redis](https://img.shields.io/badge/Reids-FFFFFF?style=for-the-badge&logo=redis)
 
 ## Tools
 
@@ -28,8 +28,6 @@ But their implementation does not claim to be "best practice".
 
 ![git](https://img.shields.io/badge/GIT-black?style=for-the-badge&logo=git)
 ![gitHub](https://img.shields.io/badge/github-292621?style=for-the-badge&logo=github)
-
-![pycharm](https://img.shields.io/badge/PyCharm-green?style=for-the-badge&logo=pycharm)
 
 ## Before you start this project, you should make sure that you have docker and docker-compose installed and fill out the .env file. Here are the fields you need to fill in: 
 
@@ -56,8 +54,15 @@ CELERY_BACKEND
 
 ## And if so, you can clone the repository and run the project with the command:
 ```
-docker-compose up
+docker-compose up --build
 ```
 ## And now the project should be up and running. If there will be errors connecting to the database (that the database on port 5432 is not found), this is how it works. 
+<br>
+
+## After you run docker-compose, an admin account will be created from init_admin.json fixture.
+```
+Email: admin@gmail.com
+Password: admin
+```
 
 # Thank you for your attention.
