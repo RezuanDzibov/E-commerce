@@ -2,9 +2,17 @@
 
 ## Some words about this project.
 
-This project is a kind of summation of my knowledge that I have acquired. 
-And I tried to implement this knowledge in this project. 
-But their implementation does not claim to be "best practice".
+I wrote a pretty big API that has a lot of features. I tried to implement many things that small and medium stores have. Maybe it wasn't exactly what I thought it would be, or maybe you don't think I did what I thought it would be. Possibly. But I did what seemed right to me at the time.
+
+I tried very hard to write code that was close to industrial projects and write readable code with docstrings.
+
+The project has a layer called services which implements the database via ORM, and this layer is where all the business logic is. The view layer is the controller layer which accepts requests, redirects them to the services layer, and sends out responses with the data generated in the services layer.
+
+I also used a library like Celery for pending tasks like sending emails to customers' emails. And I used docker/docker-compose for easy startup and testing.
+
+I didn't write the integration of the payment system because, without fronted, it doesn't make any sense to me to implement this system. To be honest, I tried to do it, but it didn't work. And I didn't plan to write the fronted part. But there is a blueprint or simulation of this system in the project, but it is just there as a "plug".
+
+About the tests. I tried to write at least some tests. But I think that they are not written in a proper way and not in a proper amount, but I will try in the next projects to cover as much code with quality tests as possible
 
 # Technologies used
 
